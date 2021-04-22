@@ -1,0 +1,15 @@
+@import "../base";
+
+.navbar{
+    @include justify(space-between);
+    flex-direction: column;
+    width: fit-content;
+    padding: 0.8rem;
+    border-radius: 1.5rem;
+    background-color: $lighterYellow;
+
+    &__link{
+     background-color: blue;
+     padding: 1.5rem !important;   
+    }
+}
