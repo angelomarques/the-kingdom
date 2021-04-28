@@ -1,0 +1,186 @@
+// font-family: 'Merriweather', serif;
+// font-family: 'Montserrat', sans-serif;
+@import "base";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: $yellow-60;
+  height: 100%;
+  color: $darkColor;
+}
+
+body,
+input,
+textarea,
+button {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+html {
+  font-size: 62.5%;
+
+  @include breakpoint-down(small) {
+    font-size: 54.6875%;
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+fieldset {
+  border: none;
+}
+
+input,
+button {
+  background: none;
+  border: none;
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+h1{
+  font-size: $font-lg;
+}
+
+.appHeader{
+  @include justify(space-between);
+  align-items: start;
+}
+
+.buttonIcons {
+  color: $darkColor;
+  transform: scale(1.5);
+}
+
+.container {
+  padding: 2rem 3.7rem;
+}
+
+.form {
+  width: 45.8rem;
+  margin-top: 9rem;
+  padding: 3.5rem 4.5rem;
+  border-radius: 3rem;
+  background: $lightColor;
+  @include justify(space-between);
+  flex-direction: column;
+
+  &.login {
+    height: 41.7rem;
+  }
+
+  &.register {
+    height: 56.5rem;
+    position: relative;
+    padding-top: 7.5rem;
+  }
+
+  &__headline {
+    font-size: $font-med;
+    font-weight: 500;
+    text-align: center;
+    color: $darkColor;
+  }
+
+  &__inputs {
+    width: 100%;
+
+    fieldset {
+      height: 4rem;
+      position: relative;
+    }
+
+    fieldset:not(:first-child) {
+      margin-top: 2.5rem;
+    }
+
+    input {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      border: 0.5px solid $darkColor;
+      padding-left: 1rem;
+      transition: opacity 250ms ease-in-out;
+
+      &:focus {
+        border: none;
+        outline: 0.5px solid $yellow-50;
+      }
+
+      &:focus + label {
+        opacity: 0;
+        border: none;
+      }
+    }
+
+    label {
+      color: $darkColor;
+      position: absolute;
+      top: 50%;
+      left: 1rem;
+      transform: translateY(-50%);
+      font-size: $font-sm;
+      pointer-events: none;
+      transition: opacity 250ms ease-in-out;
+    }
+  }
+
+  &__buttons {
+    @include justify(space-between);
+    flex-direction: column;
+
+    a {
+      text-align: center;
+      font-size: $font-sm;
+      text-decoration: underline;
+      color: $grayColor;
+      margin-bottom: 2rem;
+
+      &:hover {
+        filter: brightness(0.8);
+      }
+    }
+
+    button {
+      font-size: $font-med;
+      font-weight: 400;
+      background: $yellow-60;
+      border-radius: 5px;
+      padding: 1rem 5.6rem;
+      transition: all 250ms ease-in-out;
+
+      &:hover {
+        background: $yellow-50;
+      }
+    }
+  }
+
+  @include breakpoint-down(small) {
+    width: 100%;
+
+    &.login {
+      height: 45rem;
+    }
+
+    &.register {
+      height: 60rem;
+    }
+
+    &__buttons {
+      button {
+        padding: 1rem 3rem;
+      }
+    }
+  }
+}

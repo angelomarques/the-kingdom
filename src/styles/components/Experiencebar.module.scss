@@ -1,0 +1,27 @@
+@import "../base";
+
+.experiencebar {
+  @include justify(space-between);
+  width: 80rem;
+  color: $grayColor;
+  font-size: $font-sm;
+
+  &__progressbar {
+    position: relative;
+    width: 65rem;
+    height: 0.4rem;
+
+    background: $lighterGray;
+    opacity: 1;
+    border-radius: 0.5rem;
+  }
+
+  &__progress{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    background: $green;
+  }
+}

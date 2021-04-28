@@ -1,0 +1,72 @@
+@import "../base";
+
+.navbar {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 12rem;
+
+    border-radius: 1.5rem;
+    background-color: $yellow-80;
+
+    transition: all 200ms ease-in-out;
+
+    transform-origin: center top;
+  }
+
+  &.resizeGrow {
+    &::before {
+      transform: scaleY(230%);
+      border-radius: 1rem;
+    }
+  }
+
+  &.resizeShrink {
+    &::before {
+      transition: none;
+      transform: scaleY(230%);
+      border-radius: 1rem;
+    }
+  }
+
+  &.resized {
+    &::before {
+      transition: none;
+      height: 27.6rem;
+    }
+  }
+
+  &__content {
+    @include justify(space-between);
+    flex-direction: column;
+    width: fit-content;
+    padding: 0.8rem;
+  }
+
+  &__link {
+    padding: 1.5rem !important;
+    margin-bottom: 0.7rem !important;
+
+    transition: all 200ms ease-in-out;
+
+    &.isActive {
+      background-color: $yellow-70 !important;
+    }
+
+    &.isNotVisible {
+      transition: none;
+      position: absolute !important;
+      z-index: -1;
+      opacity: 0;
+    }
+
+    &:hover {
+      background-color: $yellow-70 !important;
+    }
+  }
+}

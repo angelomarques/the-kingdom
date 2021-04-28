@@ -1,0 +1,22 @@
+@import "base";
+
+.landingPage {
+  color: $lightColor;
+  @include justify(center);
+  flex-direction: column;
+  background-image: url("/images/helmet-bg.png");
+  background-size: 67%;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  &__headline {
+    font-size: $font-lg;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  @include breakpoint-up(medium){
+    height: 100vh;
+  }
+}
+
