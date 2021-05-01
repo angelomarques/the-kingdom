@@ -22,15 +22,17 @@ function LoginForm() {
 
       <div className="form__inputs">
         <fieldset>
-          <input type="text" name="user-email" id="user-email" />
+          <input type="text" name="user-email" id="user-email" placeholder=" " required />
           <label htmlFor="user-email">Username or email</label>
         </fieldset>
 
         <fieldset>
-          <input type="password" name="password" id="password" />
+          <input type="password" name="password" id="password" placeholder=" " required />
           <label htmlFor="password">Password</label>
         </fieldset>
       </div>
+
+      <span className="form__errMessage login">Error message</span>
 
       <fieldset className="form__buttons">
         <a onClick={openRegisterForm}>Register a new account</a>

@@ -1,12 +1,15 @@
+import AuthProvider from "../contexts/AuthContext";
 import { ModalProvider } from "../contexts/ModalContext";
 import "../styles/base.scss";
 import "../styles/globals.scss";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ModalProvider>
-      <Component {...pageProps} />
-    </ModalProvider>
+    <AuthProvider>
+      <ModalProvider>
+        <Component {...pageProps} />
+      </ModalProvider>
+    </AuthProvider>
   );
 }
 

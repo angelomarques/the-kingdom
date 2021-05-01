@@ -49,11 +49,11 @@ button {
   cursor: pointer;
 }
 
-h1{
+h1 {
   font-size: $font-lg;
 }
 
-.appHeader{
+.appHeader {
   @include justify(space-between);
   align-items: start;
 }
@@ -81,9 +81,21 @@ h1{
   }
 
   &.register {
-    height: 56.5rem;
     position: relative;
+    height: 56.5rem;
     padding-top: 7.5rem;
+  }
+
+  &__errMessage {
+    &.register {
+      position: absolute;
+      top: 3.25rem;
+      left: 10rem;
+      width: 70%;
+    }
+
+    color: $red;
+    font-size: 1.4rem;
   }
 
   &__headline {
@@ -113,12 +125,15 @@ h1{
       padding-left: 1rem;
       transition: opacity 250ms ease-in-out;
 
-      &:focus {
+      &:focus,
+      &:valid {
         border: none;
         outline: 0.5px solid $yellow-50;
       }
 
-      &:focus + label {
+      &:focus + label,
+      &:valid + label,
+      &:not(:placeholder-shown) + label {
         opacity: 0;
         border: none;
       }
