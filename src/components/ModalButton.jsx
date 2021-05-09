@@ -2,7 +2,6 @@ import { IoArrowBackOutline, IoCloseCircleOutline } from "react-icons/io5";
 import { IconButton } from "@material-ui/core";
 import { useContext } from "react";
 
-
 import { ModalContext } from "../contexts/ModalContext";
 
 import styles from "../styles/components/ModalButton.module.scss";

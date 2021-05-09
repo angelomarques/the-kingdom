@@ -4,7 +4,7 @@ import styles from "../../styles/components/UserInfo.module.scss";
 
 function UserInfo() {
   return (
-    <div className={styles.userinfo} >
+    <div className={styles.userinfo}>
       <div className={styles.userinfo__info}>
         <span>Lvl 12</span>
       </div>

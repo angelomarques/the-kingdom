@@ -1,12 +1,17 @@
 import { useRef, useState } from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
 import ModalButton from "../ModalButton";
 
 function RegisterForm() {
-  const [errMessage, setErrMessage] = useState("");
-  const { signup } = useAuth();
+  const {
+    setIsUserLoggedIn,
+    signup,
+    registerError,
+    setRegisterError,
+    setUser,
+  } = useAuth();
   const formRef = useRef(null);
 
   function handleSubmit(event) {
@@ -20,7 +25,9 @@ function RegisterForm() {
     const confirmPassword = formRef.current["confirmPassword"].value;
 
     if (password != confirmPassword) {
-      setErrMessage("the password input and the confirm password input did not match!");
+      setRegisterError(
+        "the password input and the confirm password input did not match!"
+      );
       return;
     }
 
@@ -29,16 +36,22 @@ function RegisterForm() {
 
     signup(email, password)
       .then(() => {
-        db.collection("users")
-          .doc(username)
-          .set(userRef)
-          .then(() => console.log("ok"))
-          .catch((err) => console.log(err.message));
-
-        window.location = '/home'
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            db.collection("users")
+              .doc(username)
+              .set(userRef)
+              .then(() => console.log("ok"))
+              .catch((err) => setRegisterError(err.message));
+            setUser(name);
+            setIsUserLoggedIn(true);
+            return;
+          }
+          setRegisterError("there is a error in the user registering!");
+        });
       })
       .catch((err) => {
-        setErrMessage(err.message);
+        setRegisterError(err.message);
       });
 
     formRef.current.reset();
@@ -52,7 +65,7 @@ function RegisterForm() {
       className="form register"
     >
       <ModalButton btnType="back" />
-      <span className="form__errMessage register">{errMessage}</span>
+      <span className="form__errMessage register">{registerError}</span>
       <h2 className="form__headline">Login or register your account</h2>
 
       <div className="form__inputs">

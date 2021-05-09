@@ -5,11 +5,11 @@ class MyDocument extends Document {
     return (
       <Html lang="pt">
         <Head>
-          <link
+          {/* <link
             rel="shortcut icon"
             href="/document-icon.svg"
             type="image/x-icon"
-          />
+          /> */}
           <link rel="icon" href="/images/helmet-favicon.png" />
 
           <link rel="preconnect" href="https://fonts.gstatic.com" />

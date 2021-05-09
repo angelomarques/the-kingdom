@@ -1,15 +1,18 @@
 import { IconButton } from "@material-ui/core";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { RiSettingsLine } from "react-icons/ri";
 import { VscMenu } from "react-icons/vsc";
 import { IoMapOutline, IoCloseOutline } from "react-icons/io5";
 import { CgAlarm, CgNotes } from "react-icons/cg";
+
+import {useModalContext} from '../../contexts/ModalContext'
 
 import styles from "../../styles/components/Navbar.module.scss";
 
 function Navbar() {
   const [currentSection, setCurrentSection] = useState("pomodoro");
   const [isVisble, setIsVisible] = useState(false);
+  const { settingsModalClass, setSettingsModalClass } = useModalContext();
 
   const iconClass = (section) => {
     if (section == currentSection) {
@@ -48,6 +51,14 @@ function Navbar() {
       }, 200);
   }
 
+  function toggleSettings(){
+    if(settingsModalClass == 'fade-in modal'){
+      setSettingsModalClass("fade-out modal");
+      return;
+    }
+    setSettingsModalClass('fade-in modal')
+  }
+
   return (
     <nav className={navClass}>
       <div className={styles.navbar__content}>
@@ -65,6 +76,7 @@ function Navbar() {
         </IconButton>
 
         <IconButton
+          onClick={toggleSettings}
           classes={{ root: iconClass("settings") }}
           aria-label="settings"
           title="settings"

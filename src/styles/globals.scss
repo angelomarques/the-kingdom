@@ -54,6 +54,8 @@ h1 {
 }
 
 .appHeader {
+  position: relative;
+  z-index: 5;
   @include justify(space-between);
   align-items: start;
 }
@@ -195,6 +197,44 @@ h1 {
     &__buttons {
       button {
         padding: 1rem 3rem;
+      }
+    }
+  }
+}
+
+.modal{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  @include justify(center);
+
+  background-color: rgba(0,0,0,0.35);
+
+  &__content{
+    background: $yellow-80;
+    padding: 2rem 4rem;
+    width: 30%;
+    height: 50rem;
+
+    @include justify(center);
+
+    >button{
+      width: 12rem;
+      padding: 1rem 1.2rem;
+      border-radius: 30px;
+
+      @include justify(space-between);
+
+
+      &:hover{
+        background: $yellow-70;
+      }
+
+      >span{
+        font-size: $font-sm;
       }
     }
   }
