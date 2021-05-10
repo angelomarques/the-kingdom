@@ -208,14 +208,17 @@ h1 {
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: 6 !important;
 
   @include justify(center);
 
   background-color: rgba(0,0,0,0.35);
 
   &__content{
+    position: relative;
     background: $yellow-80;
-    padding: 2rem 4rem;
+    border-radius: .5rem;
+    padding: 2rem 2rem;
     width: 30%;
     height: 50rem;
 

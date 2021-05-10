@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const ModalContext = createContext({});
 
@@ -8,7 +8,9 @@ export function useModalContext() {
 
 export function ModalProvider({ children, ...rest }) {
   const [formOpened, setFormOpened] = useState("login");
-  const [settingsModalClass, setSettingsModalClass] = useState("fade-out modal");
+  const [settingsModalClass, setSettingsModalClass] = useState(
+    "fade-out modal"
+  );
 
   return (
     <ModalContext.Provider

@@ -1,7 +1,7 @@
 import { useContext, useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { ModalContext } from "../../contexts/ModalContext";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../services/firebase";
 
 function LoginForm() {
   const {
@@ -54,14 +54,7 @@ function LoginForm() {
       return;
     }
 
-    loginWithEmail(userEmail, password).then(() => {
-      db.collection("users")
-        .where("email", "==", userEmail)
-        .get()
-        .then((snapshot) => {
-          snapshot.forEach((doc) => setUser(doc.data().name));
-        });
-    });
+    loginWithEmail(userEmail, password).then(() => setIsUserLoggedIn(true));
   }
 
   return (

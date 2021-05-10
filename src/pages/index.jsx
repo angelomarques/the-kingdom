@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 
 import { useModalContext } from "../contexts/ModalContext";
 import RegisterForm from "../components/forms/RegisterForm";
@@ -13,7 +13,6 @@ export default function LandingPage() {
   const router = useRouter();
   const { isUserLoggedIn } = useAuth();
   const { formOpened } = useModalContext();
-
 
   // This checks if there is an user and if has, then it will redirect to the home page
   useEffect(() => {

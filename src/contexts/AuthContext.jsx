@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { auth, db } from "../firebase";
+import { auth, db } from "../services/firebase";
 
 const AuthContext = createContext({});
 
@@ -26,12 +26,9 @@ export default function AuthProvider({ children }) {
         .then((doc) => {
           if (doc.exists) {
             userEmail = doc.data().email;
-            setUser(doc.data().name)
             return;
           }
-
-          // if can't find the user document, then resets the user's state
-          setUser('')
+          
           setLoginError("There is no such user!");
         });
       return loginWithEmail(userEmail, password)

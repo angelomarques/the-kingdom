@@ -5,9 +5,10 @@ import { BiLogOut } from "react-icons/bi";
 
 import Countdown from "../components/Countdown";
 import AppHeader from "../components/header/AppHeader";
+import ModalButton from "../components/ModalButton";
 import { useAuth } from "../contexts/AuthContext";
 import { useModalContext } from "../contexts/ModalContext";
-import { db } from "../firebase";
+import { auth, db } from "../services/firebase";
 
 import styles from "../styles/Home.module.scss";
 
@@ -16,7 +17,25 @@ function home() {
   const { settingsModalClass, setSettingsModalClass } = useModalContext();
   const { signout, setIsUserLoggedIn, user, setUser } = useAuth();
 
+
+  function setUserLogged(){
+    auth.onAuthStateChanged(user=>{
+      if(user){
+        db.collection("users")
+        .where("email", "==", user.email)
+        .get()
+        .then((snapshot) => {
+          snapshot.forEach((doc) => setUser(doc.data().username));
+        });
+      }
+    })
+  }
+
   useEffect(() => {
+    // set the user state
+    setUserLogged();
+
+    // handle setting modal
     if (settingsModalClass == "fade-in modal") {
       document.body.style.overflowY = "hidden";
       return;
@@ -33,6 +52,10 @@ function home() {
         setSettingsModalClass("fade-out modal");
       })
       .catch((err) => alert(err));
+  }
+
+  function closeSettingsModal(){
+    return setSettingsModalClass("fade-out modal")
   }
 
   return (
@@ -54,6 +77,7 @@ function home() {
       </section>
       <section className={settingsModalClass}>
         <div className="modal__content">
+          <ModalButton handleClick={closeSettingsModal} btnType="close" />
           <button onClick={logoutUser}>
             <BiLogOut className="buttonIcons" />
             <span>Log out</span>

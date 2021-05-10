@@ -1,16 +1,17 @@
-import { useRef, useState } from "react";
+import { useRef} from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
-import { auth, db } from "../../firebase";
+import { useModalContext } from "../../contexts/ModalContext";
+import { auth, db } from "../../services/firebase";
 import ModalButton from "../ModalButton";
 
 function RegisterForm() {
+  const { setFormOpened } = useModalContext();
   const {
     setIsUserLoggedIn,
     signup,
     registerError,
     setRegisterError,
-    setUser,
   } = useAuth();
   const formRef = useRef(null);
 
@@ -43,7 +44,6 @@ function RegisterForm() {
               .set(userRef)
               .then(() => console.log("ok"))
               .catch((err) => setRegisterError(err.message));
-            setUser(name);
             setIsUserLoggedIn(true);
             return;
           }
@@ -57,6 +57,10 @@ function RegisterForm() {
     formRef.current.reset();
   }
 
+  function back() {
+    setFormOpened("login");
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -64,7 +68,7 @@ function RegisterForm() {
       action="#"
       className="form register"
     >
-      <ModalButton btnType="back" />
+      <ModalButton handleClick={back} btnType="back" />
       <span className="form__errMessage register">{registerError}</span>
       <h2 className="form__headline">Login or register your account</h2>
 

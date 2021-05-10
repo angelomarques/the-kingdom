@@ -1,6 +1,7 @@
 @import "base";
 
 .landingPage {
+  min-height: 100vh;
   color: $lightColor;
   @include justify(center);
   flex-direction: column;
@@ -13,10 +14,6 @@
     font-size: $font-lg;
     font-weight: 600;
     text-align: center;
-  }
-
-  @include breakpoint-up(medium){
-    height: 100vh;
   }
 }
 

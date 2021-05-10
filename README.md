@@ -2,6 +2,8 @@ Em processo..
 
 # todo:
 
-- implement firebase authentication
-- Learn about files organization.
-- Learn `useHistory()` on Next Js.
+- add section completed on database;
+- fetch the data about the tasks on firebase;
+- add modals; 
+- Learn about files organization;
+- Learn `useHistory()` on Next Js;
