@@ -1,61 +1,43 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { BiLogOut } from "react-icons/bi";
 
 import Countdown from "../components/Countdown";
 import AppHeader from "../components/header/AppHeader";
-import ModalButton from "../components/ModalButton";
+import HomeModal from "../components/HomeModal";
 import { useAuth } from "../contexts/AuthContext";
+import { useData } from "../contexts/DataContext";
 import { useModalContext } from "../contexts/ModalContext";
 import { auth, db } from "../services/firebase";
 
 import styles from "../styles/Home.module.scss";
 
 function home() {
-  const router = useRouter();
-  const { settingsModalClass, setSettingsModalClass } = useModalContext();
-  const { signout, setIsUserLoggedIn, user, setUser } = useAuth();
+  const { user, setUser } = useAuth();
+  const { setLabels } = useData();
+  const {modal} = useModalContext();
 
-
-  function setUserLogged(){
-    auth.onAuthStateChanged(user=>{
-      if(user){
+  function setUserLogged() {
+    auth.onAuthStateChanged((userAuth) => {
+      if (userAuth) {
         db.collection("users")
-        .where("email", "==", user.email)
-        .get()
-        .then((snapshot) => {
-          snapshot.forEach((doc) => setUser(doc.data().username));
-        });
+          .where("email", "==", userAuth.email)
+          .get()
+          .then((snapshot) => {
+            snapshot.forEach((doc) => {
+              const username = doc.data().username;
+              setUser(username);
+
+              db.collection('users').doc(username).onSnapshot(doc=>{
+                setLabels(doc.data().labels)
+              })
+            });
+          });
       }
-    })
+    });
   }
 
-  useEffect(() => {
+  if (!user) {
     // set the user state
     setUserLogged();
-
-    // handle setting modal
-    if (settingsModalClass == "fade-in modal") {
-      document.body.style.overflowY = "hidden";
-      return;
-    }
-    document.body.style.overflowY = "visible";
-  }, [settingsModalClass]);
-
-  function logoutUser() {
-    return signout()
-      .then(() => {
-        router.push("/");
-        setIsUserLoggedIn(false);
-        setUser("");
-        setSettingsModalClass("fade-out modal");
-      })
-      .catch((err) => alert(err));
-  }
-
-  function closeSettingsModal(){
-    return setSettingsModalClass("fade-out modal")
   }
 
   return (
@@ -75,15 +57,7 @@ function home() {
           className={styles.home__image}
         />
       </section>
-      <section className={settingsModalClass}>
-        <div className="modal__content">
-          <ModalButton handleClick={closeSettingsModal} btnType="close" />
-          <button onClick={logoutUser}>
-            <BiLogOut className="buttonIcons" />
-            <span>Log out</span>
-          </button>
-        </div>
-      </section>
+      <HomeModal modalName={modal} />
     </div>
   );
 }

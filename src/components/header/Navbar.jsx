@@ -5,14 +5,14 @@ import { VscMenu } from "react-icons/vsc";
 import { IoMapOutline, IoCloseOutline } from "react-icons/io5";
 import { CgAlarm, CgNotes } from "react-icons/cg";
 
-import {useModalContext} from '../../contexts/ModalContext'
+import { useModalContext } from "../../contexts/ModalContext";
 
 import styles from "../../styles/components/Navbar.module.scss";
 
 function Navbar() {
   const [currentSection, setCurrentSection] = useState("pomodoro");
   const [isVisble, setIsVisible] = useState(false);
-  const { settingsModalClass, setSettingsModalClass } = useModalContext();
+  const { setModal, setIsModalActive } = useModalContext();
 
   const iconClass = (section) => {
     if (section == currentSection) {
@@ -44,19 +44,16 @@ function Navbar() {
       }, 200);
       return;
     }
-    
+
     setNavClass(`${styles.navbar} ${styles.resizeShrink}`);
-      setTimeout(() => {
-        setNavClass(styles.navbar);
-      }, 200);
+    setTimeout(() => {
+      setNavClass(styles.navbar);
+    }, 200);
   }
 
-  function toggleSettings(){
-    if(settingsModalClass == 'fade-in modal'){
-      setSettingsModalClass("fade-out modal");
-      return;
-    }
-    setSettingsModalClass('fade-in modal')
+  function toggleSettings() {
+    setModal("settings");
+    setIsModalActive(true);
   }
 
   return (
@@ -89,7 +86,12 @@ function Navbar() {
           aria-label="mapHistory"
           title="mapHistory"
         >
-          <IoMapOutline className="buttonIcons" />
+          {/* <IoMapOutline className="buttonIcons" /> */}
+          <img
+            src="/icons/chart.svg"
+            alt="chart icon"
+            className="buttonIcons img"
+          />
         </IconButton>
 
         <IconButton

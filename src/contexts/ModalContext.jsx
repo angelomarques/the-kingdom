@@ -8,17 +8,21 @@ export function useModalContext() {
 
 export function ModalProvider({ children, ...rest }) {
   const [formOpened, setFormOpened] = useState("login");
-  const [settingsModalClass, setSettingsModalClass] = useState(
-    "fade-out modal"
-  );
+  const [modalClass, setModalClass] = useState("fade-out modal");
+  const [modal, setModal] = useState("");
+  const [isModalActive, setIsModalActive] = useState(false);
 
   return (
     <ModalContext.Provider
       value={{
         formOpened,
         setFormOpened,
-        settingsModalClass,
-        setSettingsModalClass,
+        modalClass,
+        setModalClass,
+        modal,
+        setModal,
+        isModalActive,
+        setIsModalActive
       }}
     >
       {children}

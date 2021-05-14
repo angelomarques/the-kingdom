@@ -1,7 +1,7 @@
 import { db, fs } from "../services/firebase";
 
-export function completeSection(sectionTime, taskLabel) {
-  const sectionObject = { taskTime: sectionTime, taskLabel: taskLabel };
+export function completeSection(timeSet, sectionTime, taskLabel) {
+  const sectionObject = { timeSet, taskTime: sectionTime, taskLabel };
 
   function convertTimeToSeconds(timeString) {
     const timeArray = timeString.split(":");
@@ -35,29 +35,48 @@ export function completeSection(sectionTime, taskLabel) {
     return [timeStandard, range];
   }
 
-  [sectionObject.timeStandard, sectionObject.taskTimeRange] = timeRange(
-    sectionTime
-  );
+  [sectionObject.timeStandard, sectionObject.taskTimeRange] =
+    timeRange(sectionTime);
   sectionObject.date = currentDate();
 
   return sectionObject;
 }
 
+export function getDate() {
+  const date = new Date();
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1);
+  const day = String(date.getDate());
+
+  return [year, month, day];
+}
+
 export function saveTaskToDatabase(user, task) {
+  // get date to access the collections and documents of firebase
+  const [year, month, day] = getDate();
+
   db.collection("users")
     .doc(user)
     .collection("tasksCompleted")
-    .doc("2021")
+    .doc(year)
     .get()
     .then((doc) => {
       if (!doc.exists) {
         db.collection("users")
           .doc(user)
           .collection("tasksCompleted")
-          .doc("2021")
+          .doc(year)
           .set({
-            tasksCompleted: [task],
-            tasksCompletedLength: 1
+            months: {
+              [month]: {
+                [day]: {
+                  tasksCompleted: [task],
+                  tasksCompletedLength: 1,
+                },
+                tasksCompletedLength: 1,
+              },
+            },
+            tasksCompletedLength: 1,
           })
           .catch((err) => alert(err.message));
         return;
@@ -65,10 +84,12 @@ export function saveTaskToDatabase(user, task) {
       db.collection("users")
         .doc(user)
         .collection("tasksCompleted")
-        .doc("2021")
+        .doc(year)
         .update({
-          tasksCompleted: fs.FieldValue.arrayUnion(task),
-          tasksCompletedLength: fs.FieldValue.increment(1)
+          [String(`months.${month}.tasksCompletedLength`)]:fs.FieldValue.increment(1),
+          [String(`months.${month}.${day}.tasksCompletedLength`)]:fs.FieldValue.increment(1),
+          [String(`months.${month}.${day}.tasksCompleted`)]:fs.FieldValue.arrayUnion(task),
+          tasksCompletedLength: fs.FieldValue.increment(1),
         })
         .catch((err) => alert(err.message));
     })

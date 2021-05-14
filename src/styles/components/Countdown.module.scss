@@ -13,9 +13,10 @@
 
       .numberBox {
         @include justify(center);
-        width: 12rem;
-        height: 20rem;
         background: $yellow-80;
+        border-radius: 0.5rem;
+        height: 20rem;
+        width: 12rem;
 
         span {
           font-size: $font-xlg;
@@ -24,38 +25,84 @@
       }
     }
 
-    .timerColons{
-        @include justify(space-around);
-        flex-direction: column;
-        flex: 0.5;
+    .timerColons {
+      @include justify(space-around);
+      flex-direction: column;
+      flex: 0.5;
 
-        span{
-            width: 1.5rem;
-            height: 2.5rem;
-            background: $darkColor;
+      span {
+        width: 1.5rem;
+        height: 2.5rem;
+        background: $darkColor;
 
-            &:last-child{
-                margin-top: 5rem;
-            }
+        &:last-child {
+          margin-top: 5rem;
         }
+      }
     }
   }
 
-  >button{
-    width: 100%;
-    height: 10rem;
-    background: $blue;
-    font-size: $font-lg;
-    color: $lightColor;
-    font-weight: 600;
-    margin-top: 8rem;
+  &__modeButtons {
+    margin-top: 1.2rem;
+    @include justify(left);
 
-    &:hover{
+    button {
+      background: $yellow-80;
+      border-radius: 0.5rem;
+      font-size: $font-sm;
+      font-weight: 400;
+      text-transform: inherit;
+      height: 4.4rem;
+      padding: .5rem 1.6rem;
+      width: 11.4rem;
+      @include justify(center);
+
+      &:hover {
+        filter: brightness(0.95);
+      }
+
+      &:first-child {
+        justify-content: space-between;
+      }
+
+      &:not(:first-child) {
+        margin-left: 1.2rem;
+      }
+    }
+  }
+
+  &__addLabelBtn{
+    img{
+      margin-left: 1.2rem;
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+  }
+
+  &__timeMenuButton{
+    flex-direction: column;
+    &>span:last-child{
+      filter: opacity(.8);
+      font-size: $font-xsm;
+    }
+  }
+
+  > button {
+    background: $blue;
+    border-radius: 0.5rem;
+    color: $lightColor;
+    font-size: $font-lg;
+    font-weight: 600;
+    height: 10rem;
+    margin-top: 2.4rem;
+    width: 100%;
+
+    &:hover {
       filter: brightness(0.85);
     }
   }
 
-  &__buttonActive{
+  &__buttonActive {
     background: $red !important;
   }
 }

@@ -68,6 +68,7 @@ function LoginForm() {
       <div className="form__inputs">
         <fieldset>
           <input
+            autoFocus
             type="text"
             name="user-email"
             id="user-email"

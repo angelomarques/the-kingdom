@@ -10,7 +10,7 @@
 
 body {
   background: $yellow-60;
-  height: 100%;
+  min-height: 100vh;
   color: $darkColor;
 }
 
@@ -19,7 +19,7 @@ input,
 textarea,
 button {
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif !important;
 }
 
 html {
@@ -62,7 +62,10 @@ h1 {
 
 .buttonIcons {
   color: $darkColor;
-  transform: scale(1.5);
+
+  &:not(.img) {
+    transform: scale(1.5);
+  }
 }
 
 .container {
@@ -202,8 +205,12 @@ h1 {
   }
 }
 
-.modal{
-  position: absolute;
+.MuiMenuItem-root {
+  font-size: 1.6rem !important;
+}
+
+.modal {
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
@@ -212,32 +219,50 @@ h1 {
 
   @include justify(center);
 
-  background-color: rgba(0,0,0,0.35);
+  background-color: rgba(0, 0, 0, 0.35);
 
-  &__content{
+  &__content {
     position: relative;
     background: $yellow-80;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
     padding: 2rem 2rem;
     width: 30%;
-    height: 50rem;
+    min-height: 18rem;
 
     @include justify(center);
 
-    >button{
+    > button {
       width: 12rem;
       padding: 1rem 1.2rem;
       border-radius: 30px;
 
       @include justify(space-between);
 
-
-      &:hover{
+      &:hover {
         background: $yellow-70;
       }
 
-      >span{
+      > span {
         font-size: $font-sm;
+      }
+    }
+  }
+
+  &__addLabelForm{
+    @include justify(space-between);
+
+    &>input{
+
+      &:focus{
+        outline: 0;
+      }
+    }
+
+    & >button{
+      font-size: 0;
+      &>img{
+        width: 2.4rem;
+        height: 2.4rem;
       }
     }
   }

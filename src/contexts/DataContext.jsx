@@ -1,11 +1,31 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+
+import { db } from "../services/firebase";
 
 export const DataContext = createContext({});
 
+export function useData() {
+  return useContext(DataContext);
+}
+
 export function DataProvider({ children, ...rest }) {
-  const [user, setUser] = useState(null);
+  const [labels, setLabels] = useState([]);
+
+ async function getLabels(user) {
+    let labels;
+    await db.collection("users")
+      .doc(user)
+      .get()
+      .then((doc) => {
+        labels = doc.data().labels;
+      })
+      .catch((err) => alert(err.message));
+    return labels;
+  }
+
+  function addLabel(){}
 
   return (
-    <DataContext.Provider value={{ user }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ labels, setLabels, getLabels }}>{children}</DataContext.Provider>
   );
 }

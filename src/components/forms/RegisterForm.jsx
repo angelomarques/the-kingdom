@@ -1,4 +1,4 @@
-import { useRef} from "react";
+import { useRef } from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
@@ -7,12 +7,8 @@ import ModalButton from "../ModalButton";
 
 function RegisterForm() {
   const { setFormOpened } = useModalContext();
-  const {
-    setIsUserLoggedIn,
-    signup,
-    registerError,
-    setRegisterError,
-  } = useAuth();
+  const { setIsUserLoggedIn, signup, registerError, setRegisterError } =
+    useAuth();
   const formRef = useRef(null);
 
   function handleSubmit(event) {
@@ -33,7 +29,13 @@ function RegisterForm() {
     }
 
     const date = new Date().toLocaleDateString();
-    const userRef = { name, email, username, signupDate: date };
+    const userRef = {
+      name,
+      email,
+      username,
+      signupDate: date,
+      labels: [{ label: "study", color: "#000000", lastSelected: true }],
+    };
 
     signup(email, password)
       .then(() => {
@@ -75,6 +77,7 @@ function RegisterForm() {
       <div className="form__inputs">
         <fieldset>
           <input
+            autoFocus
             type="text"
             name="name"
             placeholder=" "
