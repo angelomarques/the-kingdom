@@ -1,8 +1,10 @@
 import Head from "next/head";
+import { useState } from "react";
 
+import BreakCountdown from "../components/BreakCountdown";
 import Countdown from "../components/Countdown";
 import AppHeader from "../components/header/AppHeader";
-import HomeModal from "../components/HomeModal";
+import HomeModal from "../components/modals/HomeModal";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { useModalContext } from "../contexts/ModalContext";
@@ -13,7 +15,9 @@ import styles from "../styles/Home.module.scss";
 function home() {
   const { user, setUser } = useAuth();
   const { setLabels } = useData();
-  const {modal} = useModalContext();
+  const { modal } = useModalContext();
+
+  const [isBreakActive, setIsBreakActive] = useState(true);
 
   function setUserLogged() {
     auth.onAuthStateChanged((userAuth) => {
@@ -26,9 +30,11 @@ function home() {
               const username = doc.data().username;
               setUser(username);
 
-              db.collection('users').doc(username).onSnapshot(doc=>{
-                setLabels(doc.data().labels)
-              })
+              db.collection("users")
+                .doc(username)
+                .onSnapshot((doc) => {
+                  setLabels(doc.data().labels);
+                });
             });
           });
       }
@@ -49,13 +55,25 @@ function home() {
 
       <h1 className={styles.home__header}>Welcome, {user}</h1>
 
-      <section className={styles.home__content}>
-        <Countdown />
-        <img
-          src="/images/soldier.png"
-          alt="soldier"
-          className={styles.home__image}
-        />
+      <section
+        className={
+          isBreakActive
+            ? `${styles.home__content} ${styles.withBreakCountdown}`
+            : styles.home__content
+        }
+      >
+        {isBreakActive ? (
+          <BreakCountdown />
+        ) : (
+          <>
+            <Countdown />
+            <img
+              src="/images/soldier.png"
+              alt="soldier"
+              className={styles.home__image}
+            />
+          </>
+        )}
       </section>
       <HomeModal modalName={modal} />
     </div>

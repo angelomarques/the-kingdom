@@ -2,10 +2,11 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { BiLogOut } from "react-icons/bi";
 
-import ModalButton from "../components/ModalButton";
-import { useAuth } from "../contexts/AuthContext";
-import { useModalContext } from "../contexts/ModalContext";
-import { db, fs } from "../services/firebase";
+import ModalButton from "../ModalButton";
+import { useAuth } from "../../contexts/AuthContext";
+import { useModalContext } from "../../contexts/ModalContext";
+import { db, fs } from "../../services/firebase";
+import AddLabelModal from "./AddLabelModal";
 
 function HomeModal({ modalName }) {
   const router = useRouter();
@@ -81,6 +82,7 @@ function HomeModal({ modalName }) {
             </button>
           </form>
         )}
+        {modalName == "completedTask" && <AddLabelModal/>}
       </div>
     </section>
   );

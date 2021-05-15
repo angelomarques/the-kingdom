@@ -13,11 +13,12 @@ function Countdown() {
   const [currentTime, setCurrentTime] = useState(6);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
+  //contexts
   const { setIsModalActive, setModal } = useModalContext();
   const { user } = useAuth();
-  const { labels } = useData();
+  const { labels, setLastTask } = useData();
 
-  const [currentLabel, setCurrentLabel] = useState();
+  const [ currentLabel, setCurrentLabel]  = useState();
   const [labelanchorEl, setLabelAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [timeSet, setTimeSet] = useState("25 min");
@@ -66,7 +67,7 @@ function Countdown() {
 
   useEffect(() => {
     const time = convertTimeSetToNumber(timeSet);
-    setCurrentTime(time * 60);
+    //setCurrentTime(time * 60);
   }, [timeSet]);
 
   let runningTimer;
@@ -84,12 +85,16 @@ function Countdown() {
       // Adding the task to firebase
       const time = convertTimeSetToNumber(timeSet);
       const task = completeSection(timeSet, time * 60, currentLabel);
+      setLastTask(task);
       saveTaskToDatabase(user, task);
 
       // run alarm sound
       const audio = new Audio("/alarm-buzzer.wav");
       audio.loop = true;
       //audio.play();
+
+      setModal("completedTask");
+      setIsModalActive(true);
     }
   }, [currentTime]);
 
@@ -112,7 +117,7 @@ function Countdown() {
   }
 
   function openAddLabelModal() {
-    setModal('addLabel');
+    setModal("addLabel");
     setIsModalActive(true);
     setLabelAnchorEl(null);
   }
@@ -174,7 +179,10 @@ function Countdown() {
               {opt.label}
             </MenuItem>
           ))}
-          <MenuItem onClick={openAddLabelModal} className={styles.countdown__addLabelBtn}>
+          <MenuItem
+            onClick={openAddLabelModal}
+            className={styles.countdown__addLabelBtn}
+          >
             add new label
             <img src="/icons/add.svg" alt="add label" />
           </MenuItem>
@@ -208,7 +216,7 @@ function Countdown() {
       <button
         onClick={toggleTimer}
         type="button"
-        className={isTimerRunning && styles.countdown__buttonActive}
+        className={isTimerRunning ? styles.countdown__buttonActive : ""}
       >
         {isTimerRunning ? "Cancel" : "Train Soldier"}
       </button>

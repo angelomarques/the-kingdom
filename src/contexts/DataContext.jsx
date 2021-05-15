@@ -10,6 +10,8 @@ export function useData() {
 
 export function DataProvider({ children, ...rest }) {
   const [labels, setLabels] = useState([]);
+  // this state is for use on the cancel task for remove of the firestore
+  const [lastTask, setLastTask] = useState({});
 
  async function getLabels(user) {
     let labels;
@@ -26,6 +28,6 @@ export function DataProvider({ children, ...rest }) {
   function addLabel(){}
 
   return (
-    <DataContext.Provider value={{ labels, setLabels, getLabels }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ labels, setLabels, getLabels,lastTask, setLastTask }}>{children}</DataContext.Provider>
   );
 }

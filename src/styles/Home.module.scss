@@ -5,6 +5,10 @@
 
   &__content {
     @include justify(space-between);
+
+    &.withBreakCountdown{
+      flex-direction: column;
+    }
   }
 
   &__image {
