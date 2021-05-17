@@ -95,3 +95,23 @@ export function saveTaskToDatabase(user, task) {
     })
     .catch((err) => alert(err.message));
 }
+
+export function convertTimeToSeconds(timeString) {
+  const timeArray = timeString.split(":");
+  const hoursInSeconds = Number(timeArray[0]) * 3600;
+  const minutesInSeconds = Number(timeArray[1]) * 60;
+  const timeSeconds = Number(timeArray[2]);
+
+  return hoursInSeconds + minutesInSeconds + timeSeconds;
+}
+
+export function convertSecondsToTime(seconds) {
+  const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
+  const minutes = String(Math.floor(seconds / 60 - hours * 60)).padStart(
+    2,
+    "0"
+  );
+  const secondsTime = String(seconds % 60).padStart(2, "0");
+
+  return hours + ":" + minutes + ":" + secondsTime;
+}

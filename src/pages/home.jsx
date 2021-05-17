@@ -9,7 +9,11 @@ import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { useModalContext } from "../contexts/ModalContext";
 import { auth, db } from "../services/firebase";
-import { getDate } from "../utils/taskSection";
+import {
+  convertSecondsToTime,
+  convertTimeToSeconds,
+  getDate,
+} from "../utils/taskSection";
 
 import styles from "../styles/Home.module.scss";
 
@@ -79,7 +83,15 @@ function home() {
   useEffect(() => {
     if (isBreakActive) {
       const date = new Date();
-      const breakOverTime = date.getTime();
+      const breakOverTimeInSeconds = convertTimeToSeconds(
+        date.toTimeString().split(" ")[0]
+      );
+      const breakOverTime = convertSecondsToTime(
+        breakOverTimeInSeconds + 10 * 60
+      )
+        .split(":")
+        .slice(0, 2)
+        .join(":");
       setTitleMessage(
         `Break time! you next session starts at ${breakOverTime}`
       );
