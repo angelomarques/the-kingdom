@@ -7,18 +7,18 @@ import { useModalContext } from "../contexts/ModalContext";
 import { completeSection, saveTaskToDatabase } from "../utils/taskSection";
 
 import styles from "../styles/components/Countdown.module.scss";
+import { getTimerUnities } from "../utils/countdownTools";
 
 function Countdown() {
   // states for the countdown functioning
-  const [currentTime, setCurrentTime] = useState(6);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [currentTime, setCurrentTime] = useState(25 * 60);
 
   //contexts
   const { setIsModalActive, setModal } = useModalContext();
   const { user } = useAuth();
-  const { labels, setLastTask } = useData();
+  const { labels, setLastTask, isTimerRunning, setIsTimerRunning } = useData();
 
-  const [ currentLabel, setCurrentLabel]  = useState();
+  const [currentLabel, setCurrentLabel] = useState();
   const [labelanchorEl, setLabelAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [timeSet, setTimeSet] = useState("25 min");
@@ -67,7 +67,7 @@ function Countdown() {
 
   useEffect(() => {
     const time = convertTimeSetToNumber(timeSet);
-    //setCurrentTime(time * 60);
+    setCurrentTime(time * 60);
   }, [timeSet]);
 
   let runningTimer;
@@ -78,32 +78,24 @@ function Countdown() {
         setCurrentTime(currentTime - 1);
       }, 1000);
     } else if (isTimerRunning && currentTime == 0) {
+      const time = convertTimeSetToNumber(timeSet);
+
       // reseting the states
       setIsTimerRunning(false);
-      setCurrentTime(25 * 60);
+      setCurrentTime(time * 60);
 
       // Adding the task to firebase
-      const time = convertTimeSetToNumber(timeSet);
       const task = completeSection(timeSet, time * 60, currentLabel);
       setLastTask(task);
       saveTaskToDatabase(user, task);
-
-      // run alarm sound
-      const audio = new Audio("/alarm-buzzer.wav");
-      audio.loop = true;
-      //audio.play();
 
       setModal("completedTask");
       setIsModalActive(true);
     }
   }, [currentTime]);
 
-  const [minuteTens, minuteUnities] = String(Math.floor(currentTime / 60))
-    .padStart(2, 0)
-    .split("");
-  const [secondTens, secondUnities] = String(currentTime % 60)
-    .padStart(2, 0)
-    .split("");
+  const [minuteTens, minuteUnities, secondTens, secondUnities] =
+    getTimerUnities(currentTime, true);
 
   function toggleTimer() {
     if (isTimerRunning) {

@@ -24,7 +24,7 @@ $breakpoints-up: (
   "xlarge": "87.5em",
 );
 
-// 639px, 1023px, 1399px
+// 450px, 639px, 1023px, 1399px
 $breakpoints-down: (
   "xsmall": "450px",
   "small": "39.9375em",
@@ -42,6 +42,10 @@ $breakpoints-down: (
   @media (max-width: map-get($breakpoints-down, $size)) {
     @content;
   }
+}
+
+@include breakpoint-down(medium){
+  $font-lg: 2.4rem !global;
 }
 
 // @mixin breakpoint-browser-shrinking($size){
@@ -107,13 +111,28 @@ $breakpoints-down: (
   }
 }
 
-@for $i from 1 through 5 {
-  .fade-in {
-    > nav {
-      > .nav-link:nth-child(#{$i}) {
-        opacity: 0;
-        animation: fade-elems 300ms ease-in-out (100ms * $i) forwards;
-      }
-    }
+// animation for the break countdown
+@keyframes blink {
+  0%{
+    transform: scale(1);
+  }
+
+  50%{
+    transform: scale(1.15);
+  }
+
+  100%{
+    transform: scale(1);
   }
 }
+
+// @for $i from 1 through 5 {
+//   .fade-in {
+//     > nav {
+//       > .nav-link:nth-child(#{$i}) {
+//         opacity: 0;
+//         animation: fade-elems 300ms ease-in-out (100ms * $i) forwards;
+//       }
+//     }
+//   }
+// }

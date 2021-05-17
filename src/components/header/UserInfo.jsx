@@ -41,7 +41,7 @@ function UserInfo() {
 
   return (
     <div className={styles.userinfo}>
-      <div className={styles.userinfo__info}>
+      <div className={`${styles.userinfo__info} ${styles.userinfo__lvl}`}>
         <span>Lvl 12</span>
       </div>
       <div className={styles.userinfo__info}>

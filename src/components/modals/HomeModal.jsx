@@ -5,14 +5,14 @@ import { BiLogOut } from "react-icons/bi";
 import ModalButton from "../ModalButton";
 import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
-import { db, fs } from "../../services/firebase";
+import TaskCompletedModal from "./TaskCompletedModal";
 import AddLabelModal from "./AddLabelModal";
 
 function HomeModal({ modalName }) {
   const router = useRouter();
-  const { modalClass, setModalClass, isModalActive, setIsModalActive } =
+  const { isModalActive, setIsModalActive } =
     useModalContext();
-  const { setIsUserLoggedIn, setUser, signout, user } = useAuth();
+  const { setIsUserLoggedIn, setUser, signout } = useAuth();
 
   function logoutUser() {
     return signout()
@@ -20,7 +20,7 @@ function HomeModal({ modalName }) {
         router.push("/");
         setIsUserLoggedIn(false);
         setUser("");
-        setModalClass("fade-out modal");
+        setIsModalActive(false);
       })
       .catch((err) => alert(err));
   }
@@ -33,32 +33,13 @@ function HomeModal({ modalName }) {
     // handle modal
     if (isModalActive) {
       document.body.style.overflowY = "hidden";
-      setModalClass("fade-in modal");
       return;
     }
-    setModalClass("fade-out modal");
     document.body.style.overflowY = "visible";
   }, [isModalActive]);
 
-  function addLabel(e) {
-    e.preventDefault();
-    const label = e.target["label"].value;
-    const labelObject = {
-      color: "#000000",
-      label,
-      lastSelected: false,
-    };
-
-    db.collection("users")
-      .doc(user)
-      .update({ labels: fs.FieldValue.arrayUnion(labelObject) })
-      .catch((err) => alert(err.message));
-    e.target.reset();
-    setIsModalActive(false);
-  }
-
   return (
-    <section className={modalClass}>
+    <section className={isModalActive ? "fade-in modal" : "fade-out modal"}>
       <div className="modal__content">
         <ModalButton btnType="close" handleClick={closeModal} />
         {modalName == "settings" && (
@@ -67,22 +48,9 @@ function HomeModal({ modalName }) {
             <span>Log out</span>
           </button>
         )}
-        {modalName == "addLabel" && (
-          <form onSubmit={addLabel} className={"modal__addLabelForm"}>
-            <input
-              maxLength={30}
-              autoComplete="off"
-              name="label"
-              type="text"
-              placeholder="Add new label"
-            />
+        {modalName == "addLabel" && <AddLabelModal />}
 
-            <button type="submit">
-              <img src="/icons/add.svg" alt="add label" />
-            </button>
-          </form>
-        )}
-        {modalName == "completedTask" && <AddLabelModal/>}
+        {modalName == "completedTask" && <TaskCompletedModal />}
       </div>
     </section>
   );

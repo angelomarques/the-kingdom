@@ -20,6 +20,11 @@
     border-radius: 2rem;
   }
 
+  &__lvl {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   &__icon {
     margin-left: 1rem;
   }

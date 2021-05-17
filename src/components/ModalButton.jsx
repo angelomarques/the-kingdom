@@ -7,12 +7,6 @@ import { ModalContext, useModalContext } from "../contexts/ModalContext";
 import styles from "../styles/components/ModalButton.module.scss";
 
 function ModalButton({handleClick, btnType }) {
-  const { setSettingsModalClass } = useModalContext();
-
-  function closeSettingsModal() {
-    return setSettingsModalClass("fade-out modal");
-  }
-
   return (
     <div className={styles.modalButton}>
       <IconButton aria-label="close" onClick={handleClick} >

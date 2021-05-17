@@ -2,13 +2,15 @@
 
 .experiencebar {
   @include justify(space-between);
-  width: 80rem;
+  width: 60%;
   color: $grayColor;
   font-size: $font-sm;
+  opacity: 0.4;
+  cursor: not-allowed;
 
   &__progressbar {
     position: relative;
-    width: 65rem;
+    width: 82%;
     height: 0.4rem;
 
     background: $lighterGray;
@@ -23,5 +25,15 @@
     left: 0;
 
     background: $green;
+  }
+
+  @include breakpoint-down(medium){
+    width: 100%;
+  }
+
+  @include breakpoint-down(medium){
+    &__progressbar{
+      width: 70%;
+    }
   }
 }

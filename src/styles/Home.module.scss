@@ -15,4 +15,28 @@
     flex: 1;
     transform: scale(0.8);
   }
+
+  @include breakpoint-down(medium){
+    &__header{margin-top: 3.2rem;}
+
+    &__image{
+      width: 31rem;
+      height: 32rem;
+    }
+  }
+
+  @include breakpoint-down(small){
+    &__content{
+      width: 45rem;
+      margin: auto;
+      margin-top: 1.6rem;
+      flex-direction: column;
+    }
+  }
+
+  @include breakpoint-down(xsmall){
+    &__content{
+      width: 100%;
+    }
+  }
 }

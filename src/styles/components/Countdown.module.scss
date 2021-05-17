@@ -53,7 +53,7 @@
       font-weight: 400;
       text-transform: inherit;
       height: 4.4rem;
-      padding: .5rem 1.6rem;
+      padding: 0.5rem 1.6rem;
       width: 11.4rem;
       @include justify(center);
 
@@ -71,18 +71,18 @@
     }
   }
 
-  &__addLabelBtn{
-    img{
+  &__addLabelBtn {
+    img {
       margin-left: 1.2rem;
       width: 2.4rem;
       height: 2.4rem;
     }
   }
 
-  &__timeMenuButton{
+  &__timeMenuButton {
     flex-direction: column;
-    &>span:last-child{
-      filter: opacity(.8);
+    & > span:last-child {
+      filter: opacity(0.8);
       font-size: $font-xsm;
     }
   }
@@ -104,5 +104,62 @@
 
   &__buttonActive {
     background: $red !important;
+  }
+
+  @include breakpoint-down(medium) {
+    width: 100%;
+    flex: 1.5;
+
+    &__timer {
+      .minutes,
+      .seconds {
+        .numberBox {
+          width: 8rem;
+          height: 13rem;
+
+          span{
+            font-size: 6.4rem;
+          }
+        }
+      }
+
+      .timerColons {
+        span {
+          width: 1rem;
+          height: 1.7rem;
+  
+          &:last-child {
+            margin-top: 3.2rem;
+          }
+        }
+      }
+    }
+
+    > button{
+      height: 6rem;
+    }
+  }
+
+  @include breakpoint-down(small) {
+    width: 100%;
+    flex: 1.5;
+
+    &__timer {
+      .minutes,
+      .seconds {
+        .numberBox {
+          width: 6rem;
+          height: 10rem;
+
+          span{
+            font-size: 4.8rem;
+          }
+        }
+      }
+    }
+
+    > button{
+      height: 5rem;
+    }
   }
 }
