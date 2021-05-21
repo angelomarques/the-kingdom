@@ -2,7 +2,7 @@
 
 The Kingom is app that is like the Forest. So it is a productivity app which can tracks you focus.
 
-You can visit the app on <https://the-kingdom.vercel.app/home/>
+You can visit the app on <https://the-kingdom.vercel.app/>
 
 The first screen that we see is the login page:
 ![login page screenshot](/screenshots/login.png)
