@@ -61,14 +61,7 @@ function home() {
             const todayObject = doc.data().months[month][day];
 
             if (todayObject) {
-              const tasksCompletedLength =
-                todayObject.tasksCompletedLength || 1;
-
-              let minutesFocused = 0;
-              for (let i = 0; i < tasksCompletedLength; i++) {
-                const time = todayObject.tasksCompleted[i].taskTime;
-                minutesFocused += time / 60;
-              }
+              const minutesFocused = todayObject.totalTime / 60 || 0;
               setTitleMessage(`Today you focused for ${minutesFocused} min`);
             }
           }

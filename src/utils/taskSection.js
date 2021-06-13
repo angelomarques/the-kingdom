@@ -72,11 +72,14 @@ export function saveTaskToDatabase(user, task) {
                 [day]: {
                   tasksCompleted: [task],
                   tasksCompletedLength: 1,
+                  totalTime: task.taskTime
                 },
                 tasksCompletedLength: 1,
+                totalTime: task.taskTime
               },
             },
             tasksCompletedLength: 1,
+            totalTime: task.taskTime
           })
           .catch((err) => alert(err.message));
         return;
@@ -87,9 +90,12 @@ export function saveTaskToDatabase(user, task) {
         .doc(year)
         .update({
           [String(`months.${month}.tasksCompletedLength`)]:fs.FieldValue.increment(1),
+          [String(`months.${month}.totalTime`)]:fs.FieldValue.increment(task.taskTime),
           [String(`months.${month}.${day}.tasksCompletedLength`)]:fs.FieldValue.increment(1),
           [String(`months.${month}.${day}.tasksCompleted`)]:fs.FieldValue.arrayUnion(task),
+          [String(`months.${month}.${day}.totalTime`)]:fs.FieldValue.increment(task.taskTime),
           tasksCompletedLength: fs.FieldValue.increment(1),
+          totalTime: fs.FieldValue.increment(task.taskTime)
         })
         .catch((err) => alert(err.message));
     })
