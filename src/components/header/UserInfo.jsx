@@ -27,13 +27,15 @@ function UserInfo() {
             .collection("tasksCompleted")
             .doc(year)
             .onSnapshot((doc) => {
-              if (!doc.data().months[month][day]) {
-                setTasksCompletedLength(0);
-                return;
+              if (doc.data().months[month]) {
+                if (!doc.data().months[month][day]) {
+                  setTasksCompletedLength(0);
+                  return;
+                }
+                setTasksCompletedLength(
+                  doc.data().months[month][day].tasksCompletedLength
+                );
               }
-              setTasksCompletedLength(
-                doc.data().months[month][day].tasksCompletedLength
-              );
             });
         });
     }

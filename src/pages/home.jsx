@@ -24,7 +24,7 @@ function home() {
 
   const [showModal, setShowModal] = useState(false);
   const [titleMessage, setTitleMessage] = useState(
-    "Welcome, today you have focused for 0 min"
+    "Welcome, today you haven't focused yet"
   );
   const [year, month, day] = getDate();
 
@@ -58,12 +58,17 @@ function home() {
         .doc(year)
         .onSnapshot((doc) => {
           if (doc.exists) {
-            const todayObject = doc.data().months[month][day];
+            const currentMonthData = doc.data().months[month];
 
-            if (todayObject) {
-              const minutesFocused = todayObject.totalTime / 60 || 0;
-              setTitleMessage(`Today you focused for ${minutesFocused} min`);
+            if (currentMonthData) {
+              if (currentMonthData[day]) {
+                const minutesFocused = currentMonthData[day].totalTime / 60;
+                setTitleMessage(`Today you focused for ${minutesFocused} min`);
+                return;
+              }
             }
+
+            // setTitleMessage("Welcome, today you haven't focused yet");
           }
         });
     }
