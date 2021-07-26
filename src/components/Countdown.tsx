@@ -1,13 +1,14 @@
 import { Menu, MenuItem } from "@material-ui/core";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { useModalContext } from "../contexts/ModalContext";
-import { completeSection, saveTaskToDatabase } from "../utils/taskSection";
+import { completeSection } from "../utils/taskSection";
+import { db } from "../services/firebase";
+import { getTimerUnities } from "../utils/countdownTools";
 
 import styles from "../styles/components/Countdown.module.scss";
-import { getTimerUnities } from "../utils/countdownTools";
 
 function Countdown() {
   // states for the countdown functioning
@@ -16,7 +17,7 @@ function Countdown() {
   //contexts
   const { setIsModalActive, setModal } = useModalContext();
   const { user } = useAuth();
-  const { labels, setFinishedTask, isTimerRunning, setIsTimerRunning } = useData();
+  const { labels, setFinishedTask, isTimerRunning, setIsTimerRunning, setLabels } = useData();
 
   const [currentLabel, setCurrentLabel] = useState("");
   const [labelanchorEl, setLabelAnchorEl] = useState(null);
@@ -26,6 +27,17 @@ function Countdown() {
   const timeOptions = ["25 min", "50 min", "1 hr"];
 
   function selectLabel(opt: string) {
+    const newLabels = labels.map(({lastSelected, ...rest}) => {
+      const selected = rest.label === opt;
+      return { lastSelected: selected, ...rest };
+    });
+
+    setLabels(newLabels);
+    db.collection("users")
+      .doc(user)
+      .update({ labels:  newLabels})
+      .catch((err) => alert(err.message));
+      
     setCurrentLabel(opt);
     setLabelAnchorEl(null);
   }
@@ -46,7 +58,7 @@ function Countdown() {
     }
   }
 
-  function selectTimeSet(opt: string) {
+  function selectTimeSet(opt: string) {    
     setTimeSet(opt);
     setAnchorEl(null);
   }

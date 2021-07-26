@@ -9,7 +9,7 @@ function TaskCompletedModal() {
   const { setIsModalActive } = useModalContext();
   const { user } = useAuth();
   const { finishedTask, setIsBreakActive } = useData();
-  const [year, month, day] = getDate();
+  // const [year, month, day] = getDate();
 
   const [isAudioOn, setIsAudioOn] = useState(true);
 
