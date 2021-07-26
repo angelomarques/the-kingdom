@@ -12,8 +12,8 @@ type DataContextType = {
   setIsBreakActive: Dispatch<SetStateAction<boolean>>;
   isTimerRunning: boolean;
   setIsTimerRunning: Dispatch<SetStateAction<boolean>>;
-  lastTask: Task;
-  setLastTask: Dispatch<SetStateAction<Task>>;
+  finishedTask: Task;
+  setFinishedTask: Dispatch<SetStateAction<Task>>;
   getLabels: (user: string) => Promise<Label[]>;
 }
 
@@ -29,7 +29,7 @@ export function DataProvider({ children }: ContextProviderProps) {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   
   // this state is for use on the cancel task for remove of the firestore
-  const [lastTask, setLastTask] = useState({} as Task);
+  const [finishedTask, setFinishedTask] = useState({} as Task);
 
   async function getLabels(user: string) {
     let labels: Label[];
@@ -45,7 +45,7 @@ export function DataProvider({ children }: ContextProviderProps) {
     return labels;
   }
 
-  function addLabel() {}
+  // function addLabel() {}
 
   return (
     <DataContext.Provider
@@ -53,8 +53,8 @@ export function DataProvider({ children }: ContextProviderProps) {
         labels,
         setLabels,
         getLabels,
-        lastTask,
-        setLastTask,
+        finishedTask,
+        setFinishedTask,
         isTimerRunning,
         setIsTimerRunning,
         isBreakActive,

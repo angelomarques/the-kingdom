@@ -11,12 +11,12 @@ import { getTimerUnities } from "../utils/countdownTools";
 
 function Countdown() {
   // states for the countdown functioning
-  const [currentTime, setCurrentTime] = useState(25 * 60);
+  const [currentTime, setCurrentTime] = useState(6);
 
   //contexts
   const { setIsModalActive, setModal } = useModalContext();
   const { user } = useAuth();
-  const { labels, setLastTask, isTimerRunning, setIsTimerRunning } = useData();
+  const { labels, setFinishedTask, isTimerRunning, setIsTimerRunning } = useData();
 
   const [currentLabel, setCurrentLabel] = useState("");
   const [labelanchorEl, setLabelAnchorEl] = useState(null);
@@ -65,10 +65,10 @@ function Countdown() {
     }
   }, [labels]);
 
-  useEffect(() => {
-    const time = convertTimeSetToNumber(timeSet);
-    setCurrentTime(time * 60);
-  }, [timeSet]);
+  // useEffect(() => {
+  //   const time = convertTimeSetToNumber(timeSet);
+  //   setCurrentTime(time * 60);
+  // }, [timeSet]);
 
   let runningTimer: NodeJS.Timeout;
 
@@ -86,8 +86,7 @@ function Countdown() {
 
       // Adding the task to firebase
       const task = completeSection(timeSet, time * 60, currentLabel);
-      setLastTask(task);
-      saveTaskToDatabase(user, task);
+      setFinishedTask(task);
 
       setModal("completedTask");
       setIsModalActive(true);

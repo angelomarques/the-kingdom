@@ -2,13 +2,13 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
 import { useData } from "../../contexts/DataContext";
 import { db, fs } from "../../services/firebase";
-import { getDate } from "../../utils/taskSection";
+import { getDate, saveTaskToDatabase } from "../../utils/taskSection";
 import { useState } from "react";
 
 function TaskCompletedModal() {
   const { setIsModalActive } = useModalContext();
   const { user } = useAuth();
-  const { lastTask, setIsBreakActive } = useData();
+  const { finishedTask, setIsBreakActive } = useData();
   const [year, month, day] = getDate();
 
   const [isAudioOn, setIsAudioOn] = useState(true);
@@ -16,25 +16,27 @@ function TaskCompletedModal() {
   // this function will cancel the session and delete the task from firestore
   function cancelCurrentSession() {
     setIsAudioOn(false);
-    return db
-      .collection("users")
-      .doc(user)
-      .collection("tasksCompleted")
-      .doc(year)
-      .update({
-        tasksCompletedLength: fs.FieldValue.increment(-1),
-        [String(`months.${month}.tasksCompletedLength`)]:
-          fs.FieldValue.increment(-1),
-        [String(`months.${month}.${day}.tasksCompletedLength`)]:
-          fs.FieldValue.increment(-1),
-        [String(`months.${month}.${day}.tasksCompleted`)]:
-          fs.FieldValue.arrayRemove(lastTask),
-      })
-      .then(() => setIsModalActive(false))
-      .catch((err) => alert(err.message));
+    setIsModalActive(false)
+    // return db
+    //   .collection("users")
+    //   .doc(user)
+    //   .collection("tasksCompleted")
+    //   .doc(year)
+    //   .update({
+    //     tasksCompletedLength: fs.FieldValue.increment(-1),
+    //     [String(`months.${month}.tasksCompletedLength`)]:
+    //       fs.FieldValue.increment(-1),
+    //     [String(`months.${month}.${day}.tasksCompletedLength`)]:
+    //       fs.FieldValue.increment(-1),
+    //     [String(`months.${month}.${day}.tasksCompleted`)]:
+    //       fs.FieldValue.arrayRemove(lastTask),
+    //   })
+    //   .then(() => setIsModalActive(false))
+    //   .catch((err) => alert(err.message));
   }
 
   function confirm() {
+    saveTaskToDatabase(user, finishedTask);
     setIsAudioOn(false);
     setIsModalActive(false);
   }
