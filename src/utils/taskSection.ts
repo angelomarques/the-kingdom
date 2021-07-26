@@ -1,9 +1,10 @@
 import { db, fs } from "../services/firebase";
+import { Task } from "../types/Task";
 
-export function completeSection(timeSet, sectionTime, taskLabel) {
-  const sectionObject = { timeSet, taskTime: sectionTime, taskLabel };
+export function completeSection(timeSet: string, sectionTime: number, taskLabel: string) {
+  const sectionObject: Task = { timeSet, taskTime: sectionTime, taskLabel };
 
-  function convertTimeToSeconds(timeString) {
+  function convertTimeToSeconds(timeString: string) {
     const timeArray = timeString.split(":");
     const hoursInSeconds = Number(timeArray[0]) * 3600;
     const minutesInSeconds = Number(timeArray[1]) * 60;
@@ -12,9 +13,9 @@ export function completeSection(timeSet, sectionTime, taskLabel) {
     return hoursInSeconds + minutesInSeconds + timeSeconds;
   }
 
-  function convertSecondsToTime(seconds) {
+  function convertSecondsToTime(seconds: number) {
     const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor(seconds / 60 - hours * 60)).padStart(
+    const minutes = String(Math.floor(seconds / 60 - Number(hours) * 60)).padStart(
       2,
       "0"
     );
@@ -51,7 +52,7 @@ export function getDate() {
   return [year, month, day];
 }
 
-export function saveTaskToDatabase(user, task) {
+export function saveTaskToDatabase(user: string, task: Task) {
   // get date to access the collections and documents of firebase
   const [year, month, day] = getDate();
 
@@ -102,7 +103,7 @@ export function saveTaskToDatabase(user, task) {
     .catch((err) => alert(err.message));
 }
 
-export function convertTimeToSeconds(timeString) {
+export function convertTimeToSeconds(timeString: string) {
   const timeArray = timeString.split(":");
   const hoursInSeconds = Number(timeArray[0]) * 3600;
   const minutesInSeconds = Number(timeArray[1]) * 60;
@@ -111,9 +112,9 @@ export function convertTimeToSeconds(timeString) {
   return hoursInSeconds + minutesInSeconds + timeSeconds;
 }
 
-export function convertSecondsToTime(seconds) {
+export function convertSecondsToTime(seconds: number) {
   const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
-  const minutes = String(Math.floor(seconds / 60 - hours * 60)).padStart(
+  const minutes = String(Math.floor(seconds / 60 - Number(hours) * 60)).padStart(
     2,
     "0"
   );

@@ -7,8 +7,13 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
 import TaskCompletedModal from "./TaskCompletedModal";
 import AddLabelModal from "./AddLabelModal";
+import { ModalType } from "../../types/Modal";
 
-function HomeModal({ modalName }) {
+type HomeModalProps = {
+  modalName: ModalType;
+}
+
+function HomeModal({ modalName }: HomeModalProps) {
   const router = useRouter();
   const { isModalActive, setIsModalActive } =
     useModalContext();
@@ -42,15 +47,15 @@ function HomeModal({ modalName }) {
     <section className={isModalActive ? "fade-in modal" : "fade-out modal"}>
       <div className="modal__content">
         <ModalButton btnType="close" handleClick={closeModal} />
-        {modalName == "settings" && (
+        {modalName === "settings" && (
           <button onClick={logoutUser}>
             <BiLogOut className="buttonIcons" />
             <span>Log out</span>
           </button>
         )}
-        {modalName == "addLabel" && <AddLabelModal />}
+        {modalName === "addLabel" && <AddLabelModal />}
 
-        {modalName == "completedTask" && <TaskCompletedModal />}
+        {modalName === "completedTask" && <TaskCompletedModal />}
       </div>
     </section>
   );

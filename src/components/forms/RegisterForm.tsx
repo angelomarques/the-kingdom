@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, FormEventHandler } from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
@@ -11,7 +11,7 @@ function RegisterForm() {
     useAuth();
   const formRef = useRef(null);
 
-  function handleSubmit(event) {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     // retrieving form values

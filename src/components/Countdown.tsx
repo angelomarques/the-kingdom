@@ -1,5 +1,5 @@
 import { Menu, MenuItem } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
@@ -18,27 +18,27 @@ function Countdown() {
   const { user } = useAuth();
   const { labels, setLastTask, isTimerRunning, setIsTimerRunning } = useData();
 
-  const [currentLabel, setCurrentLabel] = useState();
+  const [currentLabel, setCurrentLabel] = useState("");
   const [labelanchorEl, setLabelAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [timeSet, setTimeSet] = useState("25 min");
 
   const timeOptions = ["25 min", "50 min", "1 hr"];
 
-  function selectLabel(opt) {
+  function selectLabel(opt: string) {
     setCurrentLabel(opt);
     setLabelAnchorEl(null);
   }
 
-  function openMenu(e, menu) {
-    if (menu == "set time") {
+  const openMenu = (e: any, menu: string) => {
+    if (menu === "set time") {
       return setAnchorEl(e.currentTarget);
-    } else if (menu == "set label") {
+    } else if (menu === "set label") {
       return setLabelAnchorEl(e.currentTarget);
     }
   }
 
-  function handleMenuClose(menu) {
+  function handleMenuClose(menu: string) {
     if (menu == "set time") {
       return setAnchorEl(null);
     } else if (menu == "set label") {
@@ -46,12 +46,12 @@ function Countdown() {
     }
   }
 
-  function selectTimeSet(opt) {
+  function selectTimeSet(opt: string) {
     setTimeSet(opt);
     setAnchorEl(null);
   }
 
-  function convertTimeSetToNumber(timeToConvert) {
+  function convertTimeSetToNumber(timeToConvert: string) {
     let time = Number(timeToConvert.split(" ")[0]);
     if (time == 1) {
       time = 60;
@@ -70,7 +70,7 @@ function Countdown() {
     setCurrentTime(time * 60);
   }, [timeSet]);
 
-  let runningTimer;
+  let runningTimer: NodeJS.Timeout;
 
   useEffect(() => {
     if (isTimerRunning && currentTime > 0) {

@@ -68,7 +68,7 @@ function home() {
               }
             }
 
-            // setTitleMessage("Welcome, today you haven't focused yet");
+            setTitleMessage("Welcome, today you haven't focused yet");
           }
         });
     }

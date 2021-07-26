@@ -1,10 +1,10 @@
-export function getTimerUnities(time, allSplited) {
+export function getTimerUnities(time: number, allSplited: boolean) {
   const [minuteTens, minuteUnities] = String(Math.floor(time / 60))
-    .padStart(2, 0)
+    .padStart(2, "0")
     .split("");
 
   const [secondTens, secondUnities] = String(time % 60)
-    .padStart(2, 0)
+    .padStart(2, "0")
     .split("");
 
   if (allSplited) {

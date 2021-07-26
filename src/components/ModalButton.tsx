@@ -6,7 +6,12 @@ import { ModalContext, useModalContext } from "../contexts/ModalContext";
 
 import styles from "../styles/components/ModalButton.module.scss";
 
-function ModalButton({handleClick, btnType }) {
+type ModalButtonProps = {
+  handleClick: () => any;
+  btnType: "close" | "back";
+}
+
+function ModalButton({handleClick, btnType }: ModalButtonProps) {
   return (
     <div className={styles.modalButton}>
       <IconButton aria-label="close" onClick={handleClick} >

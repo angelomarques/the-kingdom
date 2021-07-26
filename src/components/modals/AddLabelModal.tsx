@@ -1,3 +1,5 @@
+import { FormEventHandler } from "react";
+
 import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
 import { db, fs } from "../../services/firebase";
@@ -6,7 +8,7 @@ function AddLabelModal() {
   const { user } = useAuth();
   const { setIsModalActive } = useModalContext();
 
-  function addLabel(e) {
+  const addLabel: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const label = e.target["label"].value;
     const labelObject = {

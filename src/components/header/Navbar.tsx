@@ -14,7 +14,7 @@ function Navbar() {
   const [isVisble, setIsVisible] = useState(false);
   const { setModal, setIsModalActive } = useModalContext();
 
-  const iconClass = (section) => {
+  const iconClass = (section: string) => {
     if (section == currentSection) {
       return `${styles.navbar__link} ${styles.isActive}`;
     }
@@ -36,7 +36,7 @@ function Navbar() {
 
   const [navClass, setNavClass] = useState(styles.navbar);
 
-  function animateNavbar(growing) {
+  function animateNavbar(growing: boolean) {
     if (growing) {
       setNavClass(`${styles.navbar} ${styles.resizeGrow}`);
       setTimeout(() => {

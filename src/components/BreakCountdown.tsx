@@ -37,7 +37,7 @@ function BreakCountdown() {
     return setIsBreakActive(false);
   }
 
-  function changeAudioVolume(e) {
+  function changeAudioVolume(e: any) {
     const audio = e.target;
     audio.volume = 0.1;
   }
