@@ -36,7 +36,7 @@ function TaskCompletedModal() {
   }
 
   function confirm() {
-    saveTaskToDatabase(user, finishedTask);
+    saveTaskToDatabase(user.uid, finishedTask);
     setIsAudioOn(false);
     setIsModalActive(false);
   }

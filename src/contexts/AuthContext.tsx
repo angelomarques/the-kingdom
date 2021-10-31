@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   createContext,
   Dispatch,
@@ -5,6 +6,8 @@ import {
   useContext,
   useState,
 } from "react";
+import nookies from 'nookies';
+
 import { auth, db, firebase } from "../services/firebase";
 import { ContextProviderProps } from "../types/ContextProviderProps";
 
@@ -28,8 +31,8 @@ type AuthContextType = {
   setLoginError: Dispatch<SetStateAction<string>>;
   registerError: string;
   setRegisterError: Dispatch<SetStateAction<string>>;
-  user: string;
-  setUser: Dispatch<SetStateAction<string>>;
+  user: firebase.User;
+  setUser: Dispatch<SetStateAction<firebase.User>>;
 };
 
 const AuthContext = createContext({} as AuthContextType);
@@ -42,31 +45,51 @@ export default function AuthProvider({ children }: ContextProviderProps) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [registerError, setRegisterError] = useState("");
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(auth.currentUser);
+
+  useEffect(() => firebase.auth().onIdTokenChanged(async (user) => {
+    if(!user) {
+      setUser(null);
+      setIsUserLoggedIn(false)
+      nookies.set(undefined, 'token', '', { path: '/' });
+    } else {
+      const token = await user.getIdToken();
+      setUser(user);
+      setIsUserLoggedIn(true)
+      nookies.set(undefined, 'token', token, { path: '/' });
+    }
+  }), []);
+
+  // force refresh the token every 10 minutes
+  useEffect(() => {
+    const handle = setInterval(async () => {
+      const user = auth.currentUser;
+      if (user) await user.getIdToken(true);
+    }, 10 * 60 * 1000);
+
+    // clean up setInterval
+    return () => clearInterval(handle);
+  }, []);
 
   function loginWithEmail(email: string, password: string) {
     return auth.signInWithEmailAndPassword(email, password);
   }
 
   async function loginWithUsername(username: string, password: string) {
-    let userEmail: string;
+    let email: string;
     try {
-      await db
-        .collection("users")
-        .doc(username)
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            userEmail = doc.data().email;
-            return;
-          }
-
-          setLoginError("There is no such user!");
-        });
-      return loginWithEmail(userEmail, password);
-    } catch {
-      setUser("");
-      setLoginError("there is a error");
+      await db.collection("users").where('username', '==', username).get().then(snapshot => {
+        snapshot.forEach(doc=>{
+          email=doc.data().email;
+        })
+        if(snapshot.empty) {
+          setLoginError('there is no such user')
+        }
+      }).catch(err=> console.error(err));
+      return loginWithEmail(email, password);
+    } catch (err) {
+      setUser(null);
+      setLoginError(err.message);
     }
   }
 
@@ -75,6 +98,7 @@ export default function AuthProvider({ children }: ContextProviderProps) {
   }
 
   function signout() {
+    setUser(null);
     return auth.signOut();
   }
 

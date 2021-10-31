@@ -1,11 +1,13 @@
 import { FormEventHandler } from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
+import { useData } from "../../contexts/DataContext";
 import { useModalContext } from "../../contexts/ModalContext";
 import { db, fs } from "../../services/firebase";
 
 function AddLabelModal() {
   const { user } = useAuth();
+  const { setLabels } = useData();
   const { setIsModalActive } = useModalContext();
 
   const addLabel: FormEventHandler<HTMLFormElement> = (e) => {
@@ -18,9 +20,17 @@ function AddLabelModal() {
     };
 
     db.collection("users")
-      .doc(user)
+      .doc(user.uid)
       .update({ labels: fs.FieldValue.arrayUnion(labelObject) })
       .catch((err) => alert(err.message));
+      db.collection("users")
+            .doc(user.uid)
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                setLabels(doc.data().labels);
+              } 
+            });
     e.target.reset();
     setIsModalActive(false);
   }

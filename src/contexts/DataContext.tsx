@@ -14,7 +14,6 @@ type DataContextType = {
   setIsTimerRunning: Dispatch<SetStateAction<boolean>>;
   finishedTask: Task;
   setFinishedTask: Dispatch<SetStateAction<Task>>;
-  getLabels: (user: string) => Promise<Label[]>;
 }
 
 export const DataContext = createContext({} as DataContextType);
@@ -31,20 +30,6 @@ export function DataProvider({ children }: ContextProviderProps) {
   // this state is for use on the cancel task for remove of the firestore
   const [finishedTask, setFinishedTask] = useState({} as Task);
 
-  async function getLabels(user: string) {
-    let labels: Label[];
-    await db
-      .collection("users")
-      .doc(user)
-      .get()
-      .then((doc) => {
-        labels = doc.data().labels;
-      })
-      .catch((err) => alert(err.message));
-      console.log(labels)
-    return labels;
-  }
-
   // function addLabel() {}
 
   return (
@@ -52,7 +37,6 @@ export function DataProvider({ children }: ContextProviderProps) {
       value={{
         labels,
         setLabels,
-        getLabels,
         finishedTask,
         setFinishedTask,
         isTimerRunning,

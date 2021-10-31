@@ -14,29 +14,21 @@ function UserInfo() {
 
   useEffect(() => {
     if (user) {
+      console.log(user)
       db.collection("users")
-        .doc(user)
+        .doc(user.uid)
         .collection("tasksCompleted")
-        .get()
-        .then((col) => {
-          if (col.empty) {
-            return;
+        .doc(year)
+        .onSnapshot((doc) => {
+          if (doc.data()?.months[month]) {
+            if (!doc.data().months[month][day]) {
+              setTasksCompletedLength(0);
+              return;
+            }
+            setTasksCompletedLength(
+              doc.data().months[month][day].tasksCompletedLength
+            );
           }
-          db.collection("users")
-            .doc(user)
-            .collection("tasksCompleted")
-            .doc(year)
-            .onSnapshot((doc) => {
-              if (doc.data().months[month]) {
-                if (!doc.data().months[month][day]) {
-                  setTasksCompletedLength(0);
-                  return;
-                }
-                setTasksCompletedLength(
-                  doc.data().months[month][day].tasksCompletedLength
-                );
-              }
-            });
         });
     }
   }, [user]);

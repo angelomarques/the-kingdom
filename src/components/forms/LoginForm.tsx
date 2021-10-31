@@ -1,7 +1,9 @@
+import { auth } from "firebase-admin";
 import { useContext, useRef, useState } from "react";
+
 import { useAuth } from "../../contexts/AuthContext";
 import { ModalContext } from "../../contexts/ModalContext";
-import { auth, db } from "../../services/firebase";
+import { db } from "../../services/firebase";
 
 function LoginForm() {
   const {
@@ -27,28 +29,15 @@ function LoginForm() {
 
     const userEmail = loginFormRef.current["user-email"].value;
     const password = loginFormRef.current["password"].value;
-    let loginWith = "username";
-
-    const userEmailSplited = userEmail.split("");
-    for (let i in userEmailSplited) {
-      if (userEmailSplited[i] == "@") {
-        loginWith = "email";
-      }
-    }
+    let loginWith = userEmail.includes('@') ? "email" : "username";
 
     if (loginWith == "username") {
       loginWithUsername(userEmail, password)
-        .then(() => {
-          auth.onAuthStateChanged((user) => {
-            if (user) {
-              setIsUserLoggedIn(true);
-              return;
-            }
-            setLoginError("there is no user logged in");
-          });
+        .then((user) => {
+          setLoginError("");
         })
         .catch((err) => {
-          setUser("");
+          setUser(null);
           setLoginError(err.message);
         });
       return;

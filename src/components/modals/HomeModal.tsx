@@ -24,7 +24,7 @@ function HomeModal({ modalName }: HomeModalProps) {
       .then(() => {
         router.push("/");
         setIsUserLoggedIn(false);
-        setUser("");
+        setUser(null);
         setIsModalActive(false);
       })
       .catch((err) => alert(err));

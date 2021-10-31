@@ -1,7 +1,10 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import nookies from 'nookies';
+import { GetServerSidePropsContext } from "next";
 
+import { firebaseAdmin } from "../services/firebaseAdmin";
 import { useModalContext } from "../contexts/ModalContext";
 import RegisterForm from "../components/forms/RegisterForm";
 import LoginForm from "../components/forms/LoginForm";
@@ -32,4 +35,23 @@ export default function LandingPage() {
       {formOpened == "register" ? <RegisterForm /> : <LoginForm />}
     </div>
   );
+}
+
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  try {
+    const cookies = nookies.get(ctx);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+
+    const { uid, email } = token;
+
+    ctx.res.writeHead(302, { Location: '/home' });
+    ctx.res.end();
+
+    return {
+      props: { message: `Your email is ${email} and your UID is ${uid}.` },
+    };
+  } catch (err) {
+    return { props: {} as never };
+  }
 }

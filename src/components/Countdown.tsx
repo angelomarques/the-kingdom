@@ -34,7 +34,7 @@ function Countdown() {
 
     setLabels(newLabels);
     db.collection("users")
-      .doc(user)
+      .doc(user.uid)
       .update({ labels:  newLabels})
       .catch((err) => alert(err.message));
       

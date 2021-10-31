@@ -7,8 +7,12 @@ import ModalButton from "../ModalButton";
 
 function RegisterForm() {
   const { setFormOpened } = useModalContext();
-  const { setIsUserLoggedIn, signup, registerError, setRegisterError } =
-    useAuth();
+  const { 
+    setIsUserLoggedIn, 
+    signup, 
+    registerError, 
+    setRegisterError 
+  } = useAuth();
   const formRef = useRef(null);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
@@ -42,7 +46,7 @@ function RegisterForm() {
         auth.onAuthStateChanged((user) => {
           if (user) {
             db.collection("users")
-              .doc(username)
+              .doc(user.uid)
               .set(userRef)
               .then(() => console.log("ok"))
               .catch((err) => setRegisterError(err.message));

@@ -1,5 +1,8 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { GetServerSidePropsContext } from "next";
+import nookies from 'nookies';
+import { firebaseAdmin } from "../services/firebaseAdmin";
 
 import BreakCountdown from "../components/BreakCountdown";
 import Countdown from "../components/Countdown";
@@ -8,7 +11,7 @@ import HomeModal from "../components/modals/HomeModal";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { useModalContext } from "../contexts/ModalContext";
-import { auth, db } from "../services/firebase";
+import { db } from "../services/firebase";
 import {
   convertSecondsToTime,
   convertTimeToSeconds,
@@ -16,8 +19,14 @@ import {
 } from "../utils/taskSection";
 
 import styles from "../styles/Home.module.scss";
+import { Label } from "../types/Label";
+interface HomeProps {
+  labels: Label[]; 
+  tasksCompletedLength: number;
+  minutesFocused?: number;
+}
 
-function home() {
+function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
   const { user, setUser } = useAuth();
   const { setLabels, isBreakActive, isTimerRunning } = useData();
   const { modal, isModalActive } = useModalContext();
@@ -28,55 +37,34 @@ function home() {
   );
   const [year, month, day] = getDate();
 
-  function setUserLogged() {
-    auth.onAuthStateChanged((userAuth) => {
-      if (userAuth) {
-        db.collection("users")
-          .where("email", "==", userAuth.email)
-          .get()
-          .then((snapshot) => {
-            snapshot.forEach((doc) => {
-              const username = doc.data().username;
-              setUser(username);
-
-              db.collection("users")
-                .doc(username)
-                .onSnapshot((doc) => {
-                  setLabels(doc.data().labels);
-                });
-            });
-          });
-      }
-    });
-  }
-
   useEffect(() => {
+    setLabels(labels)
+    if(minutesFocused && !isBreakActive) {
+      setTitleMessage(`Today you focused for ${minutesFocused} min`);
+      return;
+    } 
+  }, [user]);
+
+  useEffect(()=>{
     if (user) {
       db.collection("users")
-        .doc(user)
-        .collection("tasksCompleted")
-        .doc(year)
-        .onSnapshot((doc) => {
-          if (doc.exists) {
-            const currentMonthData = doc.data().months[month];
+      .doc(user.uid)
+      .collection("tasksCompleted")
+      .doc(year)
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          const currentMonthData = doc.data().months[month];
 
-            if (currentMonthData) {
-              if (currentMonthData[day]) {
-                const minutesFocused = currentMonthData[day].totalTime / 60;
-                setTitleMessage(`Today you focused for ${minutesFocused} min`);
-                return;
-              }
+          if (currentMonthData && !isBreakActive) {
+            if (currentMonthData[day]) {
+              const minutesFocused = currentMonthData[day].totalTime / 60;
+              setTitleMessage(`Today you focused for ${minutesFocused} min`);
             }
-
-            setTitleMessage("Welcome, today you haven't focused yet");
           }
-        });
+        }
+      });
     }
-  }, [user]);
-  if (!user) {
-    // set the user state
-    setUserLogged();
-  }
+  }, [])
 
   useEffect(() => {
     if (isBreakActive) {
@@ -96,7 +84,7 @@ function home() {
     } else if (isTimerRunning) {
       setTitleMessage("Focus!");
     }
-  }, [isBreakActive, isTimerRunning]);
+  }, [isBreakActive, isTimerRunning, user]);
 
   useEffect(() => {
     if (isModalActive) {
@@ -141,6 +129,71 @@ function home() {
       {showModal && <HomeModal modalName={modal} />}
     </div>
   );
+}
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  try {
+    const cookies = nookies.get(ctx);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    
+    const { uid, email } = token;
+    const user = await firebaseAdmin.auth().getUser(uid);
+
+    let labels: Label[] = [];
+    await firebaseAdmin.firestore().collection("users")
+    .doc(uid)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        labels = doc.data().labels;
+      } 
+    }).catch(err => console.log(err));
+
+    const [year, month, day] = getDate();
+    let tasksCompletedLength: number = 0;
+    let minutesFocused: number = 0;
+
+    
+
+    await firebaseAdmin.firestore().collection("users")
+        .doc(uid)
+        .collection("tasksCompleted")
+        .doc(year).get()
+        .then((doc) => {
+          if (doc.data()?.months[month]) {
+            const currentMonthData = doc.data().months[month];
+
+            if (currentMonthData) {
+              if (currentMonthData[day]) {
+                minutesFocused = currentMonthData[day].totalTime / 60;
+              }
+            }
+
+            if (!doc.data().months[month][day]) {
+              tasksCompletedLength = 0;
+              return;
+            }
+             tasksCompletedLength = doc.data().months[month][day].tasksCompletedLength
+          }
+        });
+    
+    return {
+      props: { labels, tasksCompletedLength },
+    };
+  } catch (err) {
+    // either the `token` cookie didn't exist
+    // or token verification failed
+    // either way: redirect to the login page
+    console.error(err)
+    ctx.res.writeHead(302, { Location: '/' });
+    ctx.res.end();
+
+    // `as never` prevents inference issues
+    // with InferGetServerSidePropsType.
+    // The props returned here don't matter because we've
+    // already redirected the user.
+    return { props: {} as never };
+  }
 }
 
 export default home;
