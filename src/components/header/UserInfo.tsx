@@ -14,7 +14,6 @@ function UserInfo() {
 
   useEffect(() => {
     if (user) {
-      console.log(user)
       db.collection("users")
         .doc(user.uid)
         .collection("tasksCompleted")
