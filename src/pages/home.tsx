@@ -45,27 +45,6 @@ function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
     } 
   }, [user]);
 
-  useEffect(()=>{
-    if (user) {
-      db.collection("users")
-      .doc(user.uid)
-      .collection("tasksCompleted")
-      .doc(year)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          const currentMonthData = doc.data().months[month];
-
-          if (currentMonthData && !isBreakActive) {
-            if (currentMonthData[day]) {
-              const minutesFocused = currentMonthData[day].totalTime / 60;
-              setTitleMessage(`Today you focused for ${minutesFocused} min`);
-            }
-          }
-        }
-      });
-    }
-  }, [])
-
   useEffect(() => {
     if (isBreakActive) {
       const date = new Date();
@@ -83,6 +62,24 @@ function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
       );
     } else if (isTimerRunning) {
       setTitleMessage("Focus!");
+    } else if (user) {
+      db.collection("users")
+      .doc(user.uid)
+      .collection("tasksCompleted")
+      .doc(year)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const currentMonthData = doc.data().months[month];
+
+          if (currentMonthData && !isBreakActive) {
+            if (currentMonthData[day]) {
+              const minutesFocused = currentMonthData[day].totalTime / 60;
+              setTitleMessage(`Today you focused for ${minutesFocused} min`);
+            }
+          }
+        }
+      });
     }
   }, [isBreakActive, isTimerRunning, user]);
 
