@@ -8,6 +8,7 @@ import { CgAlarm, CgNotes } from "react-icons/cg";
 import { useModalContext } from "../../contexts/ModalContext";
 
 import styles from "../../styles/components/Navbar.module.scss";
+import Chart from "../icons/Chart";
 
 function Navbar() {
   const [currentSection, setCurrentSection] = useState("pomodoro");
@@ -82,24 +83,27 @@ function Navbar() {
         </IconButton>
 
         <IconButton
+          disabled={true}
           classes={{ root: iconClass("mapHistory") }}
           aria-label="mapHistory"
           title="mapHistory"
         >
           {/* <IoMapOutline className="buttonIcons" /> */}
-          <img
+          {/* <img
             src="/icons/chart.svg"
             alt="chart icon"
             className="buttonIcons img"
-          />
+          /> */}
+          <Chart aria-disabled={true} className="buttonIcons img" />
         </IconButton>
 
         <IconButton
           classes={{ root: iconClass("todo-app") }}
           aria-label="todo-app"
           title="todo-app"
+          disabled={true}
         >
-          <CgNotes className="buttonIcons" />
+          <CgNotes aria-disabled={true} className="buttonIcons" />
         </IconButton>
 
         <IconButton
