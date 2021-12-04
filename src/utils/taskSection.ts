@@ -1,7 +1,12 @@
 import { db, fs } from "../services/firebase";
+import { handleTasksCompleted } from "../services/handleFirebaseData";
 import { Task } from "../types/Task";
 
-export function completeSection(timeSet: string, sectionTime: number, taskLabel: string) {
+export function completeSection(
+  timeSet: string,
+  sectionTime: number,
+  taskLabel: string
+) {
   const sectionObject: Task = { timeSet, taskTime: sectionTime, taskLabel };
 
   function convertTimeToSeconds(timeString: string) {
@@ -15,10 +20,9 @@ export function completeSection(timeSet: string, sectionTime: number, taskLabel:
 
   function convertSecondsToTime(seconds: number) {
     const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor(seconds / 60 - Number(hours) * 60)).padStart(
-      2,
-      "0"
-    );
+    const minutes = String(
+      Math.floor(seconds / 60 - Number(hours) * 60)
+    ).padStart(2, "0");
     const secondsTime = String(seconds % 60).padStart(2, "0");
 
     return hours + ":" + minutes + ":" + secondsTime;
@@ -56,47 +60,47 @@ export function saveTaskToDatabase(user: string, task: Task) {
   // get date to access the collections and documents of firebase
   const [year, month, day] = getDate();
 
-  db.collection("users")
-    .doc(user)
-    .collection("tasksCompleted")
-    .doc(year)
+  handleTasksCompleted(year, user)
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        db.collection("users")
-          .doc(user)
-          .collection("tasksCompleted")
-          .doc(year)
+        handleTasksCompleted(year, user)
           .set({
             months: {
               [month]: {
                 [day]: {
                   tasksCompleted: [task],
                   tasksCompletedLength: 1,
-                  totalTime: task.taskTime
+                  totalTime: task.taskTime,
                 },
                 tasksCompletedLength: 1,
-                totalTime: task.taskTime
+                totalTime: task.taskTime,
               },
             },
             tasksCompletedLength: 1,
-            totalTime: task.taskTime
+            totalTime: task.taskTime,
+            lastSessionDate: new Date().toDateString(),
+            daysInARow: 1
           })
           .catch((err) => alert(err.message));
         return;
       }
-      db.collection("users")
-        .doc(user)
-        .collection("tasksCompleted")
-        .doc(year)
+      handleTasksCompleted(year, user)
         .update({
-          [String(`months.${month}.tasksCompletedLength`)]:fs.FieldValue.increment(1),
-          [String(`months.${month}.totalTime`)]:fs.FieldValue.increment(task.taskTime),
-          [String(`months.${month}.${day}.tasksCompletedLength`)]:fs.FieldValue.increment(1),
-          [String(`months.${month}.${day}.tasksCompleted`)]:fs.FieldValue.arrayUnion(task),
-          [String(`months.${month}.${day}.totalTime`)]:fs.FieldValue.increment(task.taskTime),
+          [String(`months.${month}.tasksCompletedLength`)]:
+            fs.FieldValue.increment(1),
+          [String(`months.${month}.totalTime`)]: fs.FieldValue.increment(
+            task.taskTime
+          ),
+          [String(`months.${month}.${day}.tasksCompletedLength`)]:
+            fs.FieldValue.increment(1),
+          [String(`months.${month}.${day}.tasksCompleted`)]:
+            fs.FieldValue.arrayUnion(task),
+          [String(`months.${month}.${day}.totalTime`)]: fs.FieldValue.increment(
+            task.taskTime
+          ),
           tasksCompletedLength: fs.FieldValue.increment(1),
-          totalTime: fs.FieldValue.increment(task.taskTime)
+          totalTime: fs.FieldValue.increment(task.taskTime),
         })
         .catch((err) => alert(err.message));
     })
@@ -114,10 +118,9 @@ export function convertTimeToSeconds(timeString: string) {
 
 export function convertSecondsToTime(seconds: number) {
   const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
-  const minutes = String(Math.floor(seconds / 60 - Number(hours) * 60)).padStart(
-    2,
-    "0"
-  );
+  const minutes = String(
+    Math.floor(seconds / 60 - Number(hours) * 60)
+  ).padStart(2, "0");
   const secondsTime = String(seconds % 60).padStart(2, "0");
 
   return hours + ":" + minutes + ":" + secondsTime;

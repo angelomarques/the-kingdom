@@ -20,6 +20,9 @@ import {
 
 import styles from "../styles/Home.module.scss";
 import { Label } from "../types/Label";
+import { handleTasksCompleted } from "../services/handleFirebaseData";
+import { TasksData } from "../types/Task";
+import moment from "moment";
 interface HomeProps {
   labels: Label[]; 
   tasksCompletedLength: number;
@@ -63,10 +66,7 @@ function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
     } else if (isTimerRunning) {
       setTitleMessage("Focus!");
     } else if (user) {
-      db.collection("users")
-      .doc(user.uid)
-      .collection("tasksCompleted")
-      .doc(year)
+      handleTasksCompleted(year, user.uid)
       .get()
       .then((doc) => {
         if (doc.exists) {
@@ -144,21 +144,20 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       if (doc.exists) {
         labels = doc.data().labels;
       } 
-    }).catch(err => console.log(err));
+    }).catch(err => console.error(err));
 
     const [year, month, day] = getDate();
     let tasksCompletedLength: number = 0;
     let minutesFocused: number = 0;
-
-    
 
     await firebaseAdmin.firestore().collection("users")
         .doc(uid)
         .collection("tasksCompleted")
         .doc(year).get()
         .then((doc) => {
-          if (doc.data()?.months[month]) {
-            const currentMonthData = doc.data().months[month];
+          const data = doc.data() as TasksData
+          if (doc.exists && data?.months[month]) {
+            const currentMonthData = data.months[month];
 
             if (currentMonthData) {
               if (currentMonthData[day]) {
@@ -166,13 +165,22 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
               }
             }
 
-            if (!doc.data().months[month][day]) {
+            if (!data.months[month][day]) {
               tasksCompletedLength = 0;
               return;
             }
-             tasksCompletedLength = doc.data().months[month][day].tasksCompletedLength
+             tasksCompletedLength = data.months[month][day].tasksCompletedLength
           }
-        });
+
+          const todaysDate = new Date().toDateString();
+          const dateDifference = moment(todaysDate).diff(data.lastSessionDate, 'days');
+          if (dateDifference > 1 && data.daysInARow !== 0) {
+            handleTasksCompleted(year, uid).update({
+              daysInARow: 0
+            })
+          }
+          console.log(data.daysInARow)
+        }).catch(error => console.error(error));
     
     return {
       props: { labels, tasksCompletedLength },

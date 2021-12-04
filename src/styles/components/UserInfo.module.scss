@@ -28,4 +28,22 @@
   &__icon {
     margin-left: 1rem;
   }
+
+  &__tooltip {
+    padding: .8rem .4rem;
+    font-size: 1.2rem;
+
+    & > div {
+      &:first-child {
+        margin-bottom: 1rem;
+      }
+
+      & > p {
+        &:first-child {
+          font-weight: 600;
+          margin-bottom: .5rem;
+        }
+      }
+    }
+  }
 }

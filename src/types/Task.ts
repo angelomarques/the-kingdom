@@ -6,3 +6,18 @@ export type Task = {
   taskTimeRange?: string;
   date?: string;
 };
+
+type DataInfo = {
+  tasksCompletedLength: number;
+  totalTime: number;
+};
+
+export interface TasksData extends DataInfo {
+  months: DataInfo & {
+    [month: string | number]: DataInfo & {
+      [day: string | number]: DataInfo & { tasksCompleted: Task[] };
+    };
+  };
+  lastSessionDate: string;
+  daysInARow: number;
+};
