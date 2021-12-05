@@ -2,14 +2,22 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useModalContext } from "../../contexts/ModalContext";
 import { useData } from "../../contexts/DataContext";
 import { db, fs } from "../../services/firebase";
-import { getDate, saveTaskToDatabase } from "../../utils/taskSection";
+import { getDate, handleTasksInfo, saveTaskToDatabase } from "../../utils/taskSection";
 import { useState } from "react";
 
 function TaskCompletedModal() {
   const { setIsModalActive } = useModalContext();
   const { user } = useAuth();
-  const { finishedTask, setIsBreakActive } = useData();
-  // const [year, month, day] = getDate();
+  const { 
+    finishedTask, 
+    daysInARow,
+    setMinutesFocused,
+    setIsBreakActive, 
+    setWeekSections, 
+    setTasksCompletedLength, 
+    setDaysInARow 
+  } = useData();
+  const [year, month, day] = getDate();
 
   const [isAudioOn, setIsAudioOn] = useState(true);
 
@@ -35,10 +43,17 @@ function TaskCompletedModal() {
     //   .catch((err) => alert(err.message));
   }
 
-  function confirm() {
-    saveTaskToDatabase(user.uid, finishedTask);
+  async function confirm() {
     setIsAudioOn(false);
     setIsModalActive(false);
+    if (user) await saveTaskToDatabase(user.uid, finishedTask);
+    handleTasksInfo(year, month, day, user.uid).then(data => {
+      console.log('modal task info called')
+      setWeekSections(data.weekSections);
+      setTasksCompletedLength(data.tasksCompletedLength);
+      setMinutesFocused(data.minutesFocused)
+      if (daysInARow !== data.daysInARow) setDaysInARow(data.daysInARow);
+    })
   }
 
   function startBreakTimer() {

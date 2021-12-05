@@ -10,45 +10,10 @@ import styles from "../../styles/components/UserInfo.module.scss";
 import { getWeekCompletedSessions } from "../../utils/handleSessionData";
 import { TasksData } from "../../types/Task";
 import { handleTasksCompleted } from "../../services/handleFirebaseData";
+import { useData } from "../../contexts/DataContext";
 
 function UserInfo() {
-  const { user } = useAuth();
-  const [tasksCompletedLength, setTasksCompletedLength] = useState(0);
-  const [year, month, day] = getDate();
-  const [weekSections, setWeekSections] = useState(0);
-  const [daysInARow, setDaysInARow] = useState(0);
-
-  useEffect(() => {
-    if (user) {
-      handleTasksCompleted(year, user.uid)
-        .onSnapshot((doc) => {
-          const data = doc.data() as TasksData;
-          if (data) {
-            setWeekSections(getWeekCompletedSessions(data, user.uid));
-            if (data?.months[month]) {
-              const currentDay = data.months[month][day];
-              if (!currentDay) {
-                setTasksCompletedLength(0);
-                return;
-              }
-
-              setTasksCompletedLength(
-                currentDay.tasksCompletedLength
-              );
-              
-              const todaysDate = new Date().toDateString()
-              if (currentDay.tasksCompletedLength === 1 && data.lastSessionDate !== todaysDate) {
-                handleTasksCompleted(year, user.uid).update({
-                  lastSessionDate: todaysDate,
-                  daysInARow: data.daysInARow + 1
-                })
-              }
-              if (daysInARow !== data.daysInARow) setDaysInARow(data.daysInARow)
-            }
-          }
-        });
-    }
-  }, [user]);
+  const { weekSections, daysInARow, tasksCompletedLength } = useData()
 
   const Message: FC = () => {
     return (

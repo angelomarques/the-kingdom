@@ -1,6 +1,8 @@
+import { useData } from "../contexts/DataContext";
 import { db, fs } from "../services/firebase";
 import { handleTasksCompleted } from "../services/handleFirebaseData";
-import { Task } from "../types/Task";
+import { Task, TasksData } from "../types/Task";
+import { getWeekCompletedSessions } from "./handleSessionData";
 
 export function completeSection(
   timeSet: string,
@@ -56,15 +58,53 @@ export function getDate() {
   return [year, month, day];
 }
 
-export function saveTaskToDatabase(user: string, task: Task) {
+export async function handleTasksInfo(year: string, month:string, day: string, userUid: string) {
+  // const { setWeekSections, setTasksCompletedLength, setDaysInARow, daysInARow } = useData();
+  let weekSections = 0;
+  let tasksCompletedLength = 0;
+  let daysInARow = 0;
+  let minutesFocused = 0;
+
+  const response = await handleTasksCompleted(year, userUid)
+    .get()
+    .then((doc) => {
+      const data = doc.data() as TasksData;
+      if (data) {
+        weekSections = getWeekCompletedSessions(data, userUid);
+        if (data?.months[month]) {
+          const currentDay = data.months[month][day];
+          if (!currentDay) return;
+
+          minutesFocused = currentDay.totalTime / 60;
+
+          tasksCompletedLength = currentDay.tasksCompletedLength;
+
+          const todaysDate = new Date().toDateString();
+          if (
+            currentDay.tasksCompletedLength === 1 &&
+            data.lastSessionDate !== todaysDate
+          ) {
+            handleTasksCompleted(year, userUid).update({
+              lastSessionDate: todaysDate,
+              daysInARow: data.daysInARow + 1,
+            });
+          }
+          daysInARow = data.daysInARow;
+        }
+      }
+    });
+    return { weekSections, tasksCompletedLength, minutesFocused, daysInARow }
+}
+
+export async function saveTaskToDatabase(user: string, task: Task) {
   // get date to access the collections and documents of firebase
   const [year, month, day] = getDate();
 
-  handleTasksCompleted(year, user)
+  await handleTasksCompleted(year, user)
     .get()
-    .then((doc) => {
+    .then(async (doc) => {
       if (!doc.exists) {
-        handleTasksCompleted(year, user)
+        await handleTasksCompleted(year, user)
           .set({
             months: {
               [month]: {
@@ -80,12 +120,12 @@ export function saveTaskToDatabase(user: string, task: Task) {
             tasksCompletedLength: 1,
             totalTime: task.taskTime,
             lastSessionDate: new Date().toDateString(),
-            daysInARow: 1
+            daysInARow: 1,
           })
           .catch((err) => alert(err.message));
         return;
       }
-      handleTasksCompleted(year, user)
+      await handleTasksCompleted(year, user)
         .update({
           [String(`months.${month}.tasksCompletedLength`)]:
             fs.FieldValue.increment(1),

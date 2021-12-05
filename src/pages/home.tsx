@@ -16,6 +16,7 @@ import {
   convertSecondsToTime,
   convertTimeToSeconds,
   getDate,
+  handleTasksInfo,
 } from "../utils/taskSection";
 
 import styles from "../styles/Home.module.scss";
@@ -29,9 +30,19 @@ interface HomeProps {
   minutesFocused?: number;
 }
 
-function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
-  const { user, setUser } = useAuth();
-  const { setLabels, isBreakActive, isTimerRunning } = useData();
+function home({labels, tasksCompletedLength, minutesFocused: minutesProps }: HomeProps) {
+  const { user } = useAuth();
+  const { 
+    setLabels, 
+    setWeekSections, 
+    setTasksCompletedLength, 
+    setDaysInARow,
+    setMinutesFocused,
+    minutesFocused,
+    daysInARow,
+    isBreakActive,
+    isTimerRunning 
+  } = useData();
   const { modal, isModalActive } = useModalContext();
 
   const [showModal, setShowModal] = useState(false);
@@ -41,12 +52,27 @@ function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
   const [year, month, day] = getDate();
 
   useEffect(() => {
+    if (user) {
+      handleTasksInfo(year, month, day, user.uid).then(data => {
+        setWeekSections(data.weekSections);
+        setTasksCompletedLength(data.tasksCompletedLength);
+        setMinutesFocused(data.minutesFocused)
+        if (daysInARow !== data.daysInARow) setDaysInARow(data.daysInARow);
+      })
+    }
+  }, [user])
+
+  useEffect(() => {
     setLabels(labels)
     if(minutesFocused && !isBreakActive) {
       setTitleMessage(`Today you focused for ${minutesFocused} min`);
       return;
     } 
   }, [user]);
+
+  useEffect(() => {
+     if (minutesFocused) setTitleMessage(`Today you focused for ${minutesFocused} min`);
+  }, [minutesFocused])
 
   useEffect(() => {
     if (isBreakActive) {
@@ -65,21 +91,6 @@ function home({labels, tasksCompletedLength, minutesFocused}: HomeProps) {
       );
     } else if (isTimerRunning) {
       setTitleMessage("Focus!");
-    } else if (user) {
-      handleTasksCompleted(year, user.uid)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const currentMonthData = doc.data().months[month];
-
-          if (currentMonthData && !isBreakActive) {
-            if (currentMonthData[day]) {
-              const minutesFocused = currentMonthData[day].totalTime / 60;
-              setTitleMessage(`Today you focused for ${minutesFocused} min`);
-            }
-          }
-        }
-      });
     }
   }, [isBreakActive, isTimerRunning, user]);
 
@@ -159,12 +170,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           if (doc.exists && data?.months[month]) {
             const currentMonthData = data.months[month];
 
-            if (currentMonthData) {
-              if (currentMonthData[day]) {
-                minutesFocused = currentMonthData[day].totalTime / 60;
-              }
-            }
-
             if (!data.months[month][day]) {
               tasksCompletedLength = 0;
               return;
@@ -179,7 +184,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
               daysInARow: 0
             })
           }
-          console.log(data.daysInARow)
         }).catch(error => console.error(error));
     
     return {
