@@ -12,7 +12,7 @@ import styles from "../styles/components/Countdown.module.scss";
 
 function Countdown() {
   // states for the countdown functioning
-  const [currentTime, setCurrentTime] = useState(25 * 60);
+  const [currentTime, setCurrentTime] = useState(6);
 
   //contexts
   const { setIsModalActive, setModal } = useModalContext();
@@ -77,10 +77,10 @@ function Countdown() {
     }
   }, [labels]);
 
-  useEffect(() => {
-    const time = convertTimeSetToNumber(timeSet);
-    setCurrentTime(time * 60);
-  }, [timeSet]);
+  // useEffect(() => {
+  //   const time = convertTimeSetToNumber(timeSet);
+  //   setCurrentTime(time * 60);
+  // }, [timeSet]);
 
   let runningTimer: NodeJS.Timeout;
 

@@ -48,7 +48,6 @@ function TaskCompletedModal() {
     setIsModalActive(false);
     if (user) await saveTaskToDatabase(user.uid, finishedTask);
     handleTasksInfo(year, month, day, user.uid).then(data => {
-      console.log('modal task info called')
       setWeekSections(data.weekSections);
       setTasksCompletedLength(data.tasksCompletedLength);
       setMinutesFocused(data.minutesFocused)
